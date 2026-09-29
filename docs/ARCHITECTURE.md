@@ -6,8 +6,8 @@
 - `sync.rs`: shell out to `gh api` (zero token UI), paginate, ETag-gated, upsert.
 - `store.rs`: rusqlite schema. `repos` + FTS5 + `decisions` ledger. One file, ~6MB.
 - `scoring.rs`: deterministic health from stored fields. No net, no LLM.
-- `curate.rs`: hash-gated Jev batch. Miss only. Reuses jev-scout enrich + jev-curate judge pattern.
-- `query.rs`: FTS query + filters + rank merge + context pack with token cap.
+- `curate.rs` (optional): hash-gated Jev batch, miss only. Entire module inert without key; queries treat Jev columns as NULL.
+- `query.rs`: FTS query + filters + rank merge + context pack with token cap. Works with zero Jev rows.
 - `export.rs`: tag-grouped `STARS.md` writer.
 - `mcp.rs`: rmcp stdio. Thin wrappers over `query`/`store` fns. Same code paths as CLI.
 

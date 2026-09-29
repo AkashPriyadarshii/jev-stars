@@ -9,6 +9,7 @@
 - Verified corpus: 1,243 starred repos via `gh api` Link header (`rel="last" page=1243`).
 - Read ziggygrep MDs (CLAUDE/AGENTS/PRD/ARCHITECTURE/DESIGN/HANDOFF/README/CHANGELOG) + My-Starred-Repos MDs (CLAUDE/USAGE/STATE_HANDOFF/CHANGELOG) as templates.
 - Wrote MD skeleton in this folder. No code, no `gh repo create` yet.
+- Direction locked 2026-09-29: agentic-first, Jev optional. `context` serves health + FTS + evidence with zero Jev rows; `curate` is the only key-gated command.
 
 ## Next (needs "go")
 

@@ -9,7 +9,7 @@ in ~2k tokens instead of 50 README dumps.
 Offline-first. One static binary. SQLite + FTS5. Windows-first;
 builds for Linux/macOS.
 
-Jev enriches, never blocks: no key still gives search + rank + export.
+Jev enriches, never blocks: no key still gives search + rank + context + status + export. `curate` is the only key-gated command.
 
 ## Build
 
@@ -37,7 +37,7 @@ with one runnable check.
 | `search <q>` | FTS + `--lang`/`--topic`/`--alive` filters, ranked table |
 | `context <q>` | Bounded agent JSON: repo + health + Jev + evidence |
 | `status` | Dead/alive/license rollup, fully offline |
-| `curate` | Jev Choice + Score batch, cache-first, needs net |
+| `curate` | Jev Choice + Score batch, cache-first, needs net, optional (skipped without key) |
 | `export` | `STARS.md` awesome-list grouped by Jev tags, offline |
 | `mcp` | stdio MCP server for pi, same fns as CLI |
 
@@ -51,6 +51,7 @@ Global flags: `--json`, `--limit N` (default 10, max 50).
   `alive, archived, last_push_days, license, language, topics`.
 - `context` merges FTS rank + health + cached Jev into one bounded
   object with `why_matched` + README excerpt. Token-capped by construction.
+  Jev fields are null when never curated; the object still answers.
 - Net only in `sync` (GitHub) and `curate` (Jev). Query paths never touch net.
 - MCP layer sells `context`, not `search`. 5 tools max:
   `search, context, status, sync, export`. `similar`/vectors wait for v0.2.

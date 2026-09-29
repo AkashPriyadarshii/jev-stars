@@ -39,6 +39,7 @@ local-first, no account, no telemetry.
 
 **What does it cost?** Free. MIT. Search, rank, and export work with no API key.
 Jev tagging needs `$TYPESAFE_API_KEY` once; results cache forever keyed by content hash.
+No key: every command except `curate` works at full power.
 
 ```console
 $ jev-stars context "rust mcp server" --limit 3
@@ -88,7 +89,7 @@ jev-stars context "rust mcp server" --json
 | `search <q>` | FTS + `--lang`/`--topic`/`--alive`, ranked table (offline) |
 | `context <q>` | Bounded agent JSON: health + Jev + evidence (offline after curate) |
 | `status` | Dead/alive/license rollup (offline) |
-| `curate` | Jev Choice + Score batch, cache-first (net) |
+| `curate` | Jev Choice + Score batch, cache-first (net, optional) |
 | `export` | `STARS.md` grouped by tags (offline) |
 | `mcp` | stdio MCP server: `search, context, status, sync, export` |
 

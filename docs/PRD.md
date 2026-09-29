@@ -25,7 +25,7 @@ the truth. Jev adds judgment once, cached by content hash.
 - `search`: FTS5 + `--lang/--topic/--alive`, ranked, <100ms.
 - `context`: bounded JSON (repo, url, starred_at, last_push, archived, license, language, topics, maintenance, Jev choice/score/tags, why_matched, readme excerpt).
 - `status`: offline dead/alive/license rollup.
-- `curate`: Jev Choice + Score batch, `(repo, readme_hash, schema_v, model)` gate. Rerun = zero calls on unchanged corpus.
+- `curate` (optional, needs `$TYPESAFE_API_KEY`): Jev Choice + Score batch, `(repo, readme_hash, schema_v, model)` gate. Rerun = zero calls on unchanged corpus. Without a key the command exits 0 with `curated: 0, skipped: no-key`, and `context` still serves health + FTS.
 - `export`: `STARS.md` grouped by Jev tags.
 - `mcp`: stdio server, 5 tools (`search, context, status, sync, export`).
 - `cargo test` green. `cargo clippy -D warnings` clean.
@@ -50,4 +50,4 @@ the truth. Jev adds judgment once, cached by content hash.
 - Correct: sync count == GitHub starred count (1,243 on 2026-09-29).
 - Fast: `search` p50 <100ms on 8GB i3. Rerun `curate` = 0 Jev calls.
 - Small: one binary, SQLite file ~6MB, no daemon.
-- Agent check: pi `context "rust mcp"` returns alive-first ranked rows with evidence.
+- Agent check: pi `context "rust mcp"` returns alive-first ranked rows with evidence, with and without Jev rows present.

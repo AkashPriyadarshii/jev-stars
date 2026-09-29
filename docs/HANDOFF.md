@@ -18,7 +18,7 @@ MD skeleton complete. No code, no remote. Waiting on "go" for `gh repo create`.
 - `gh repo create jev-stars --public` + description/topics/homepage.
 - Chunk 1: `sync + store`. Check: row count == 1,243.
 - Chunk 2: `search + rank + context`. Check: <100ms.
-- Chunk 3: `curate + export`. Check: rerun zero Jev calls.
+- Chunk 3: `curate` (optional, key-gated) + export. Check: rerun zero Jev calls; no-key run still gives full `context`.
 - Chunk 4: `mcp` stdio. Check: pi `context` returns rows.
 
 ## Proven inputs
