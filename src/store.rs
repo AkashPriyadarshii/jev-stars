@@ -146,11 +146,9 @@ pub fn search(
     }
     sql.push_str(" ORDER BY rank, stars DESC LIMIT ?4");
     let mut stmt = db.prepare(&sql)?;
-    let rows = stmt.query_map(
-        rusqlite::params![fts_q, lang, topic, limit],
-        row_to_hit,
-    )?;
-    rows.collect::<std::result::Result<Vec<_>, _>>().map_err(anyhow::Error::from)
+    let rows = stmt.query_map(rusqlite::params![fts_q, lang, topic, limit], row_to_hit)?;
+    rows.collect::<std::result::Result<Vec<_>, _>>()
+        .map_err(anyhow::Error::from)
 }
 
 /// Latest Jev decision per repo: (choice, score, confidence). Missing = never curated.
@@ -170,10 +168,9 @@ pub fn decisions_for(
         "SELECT repo, choice, score / 3.0, confidence FROM decisions WHERE repo IN ({placeholders})"
     );
     let mut stmt = db.prepare(&sql)?;
-    let rows = stmt.query_map(
-        rusqlite::params_from_iter(repos.iter()),
-        |r| Ok((r.get::<_, String>(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
-    )?;
+    let rows = stmt.query_map(rusqlite::params_from_iter(repos.iter()), |r| {
+        Ok((r.get::<_, String>(0)?, r.get(1)?, r.get(2)?, r.get(3)?))
+    })?;
     let mut map = std::collections::HashMap::new();
     for row in rows {
         let (repo, choice, score, conf): (String, Option<String>, Option<f64>, Option<f64>) = row?;
@@ -184,10 +181,9 @@ pub fn decisions_for(
 
 pub fn counts(db: &Connection) -> Result<(i64, i64, i64)> {
     let total: i64 = db.query_row("SELECT COUNT(*) FROM repos", [], |r| r.get(0))?;
-    let archived: i64 =
-        db.query_row("SELECT COUNT(*) FROM repos WHERE archived=1", [], |r| {
-            r.get(0)
-        })?;
+    let archived: i64 = db.query_row("SELECT COUNT(*) FROM repos WHERE archived=1", [], |r| {
+        r.get(0)
+    })?;
     let with_push: i64 = db.query_row(
         "SELECT COUNT(*) FROM repos WHERE pushed_at IS NOT NULL",
         [],

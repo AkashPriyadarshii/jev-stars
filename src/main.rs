@@ -79,7 +79,10 @@ fn main() -> Result<()> {
                 std::process::exit(1);
             }
             if cli.json {
-                println!("{}", serde_json::to_string_pretty(&query::context(&db, &query, limit)?)?);
+                println!(
+                    "{}",
+                    serde_json::to_string_pretty(&query::context(&db, &query, limit)?)?
+                );
             } else {
                 for h in &hits {
                     println!(
@@ -94,7 +97,10 @@ fn main() -> Result<()> {
             }
         }
         Cmd::Context { query, limit } => {
-            println!("{}", serde_json::to_string_pretty(&query::context(&db, &query, limit)?)?);
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&query::context(&db, &query, limit)?)?
+            );
         }
         Cmd::Status => {
             let (total, archived, with_push) = store::counts(&db)?;

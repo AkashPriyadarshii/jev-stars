@@ -30,8 +30,8 @@ pub fn fetch_stars() -> Result<Vec<Repo>> {
                 depth -= 1;
                 if depth == 0 {
                     let chunk = &text[start.unwrap()..=i];
-                    let mut page: Vec<Repo> = serde_json::from_str(chunk)
-                        .context("parse gh page JSON")?;
+                    let mut page: Vec<Repo> =
+                        serde_json::from_str(chunk).context("parse gh page JSON")?;
                     repos.append(&mut page);
                 }
             }

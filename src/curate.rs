@@ -41,7 +41,13 @@ pub fn curate(db: &Connection, limit: i64) -> Result<(usize, usize)> {
     )?;
     let pending: Vec<Pending> = stmt
         .query_map(rusqlite::params![SCHEMA_V, MODEL, limit], |r| {
-            Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get::<_, Option<String>>(3)?.unwrap_or_default(), r.get(4)?))
+            Ok((
+                r.get(0)?,
+                r.get(1)?,
+                r.get(2)?,
+                r.get::<_, Option<String>>(3)?.unwrap_or_default(),
+                r.get(4)?,
+            ))
         })?
         .collect::<std::result::Result<Vec<_>, _>>()?;
     if pending.is_empty() {
@@ -61,11 +67,7 @@ pub fn curate(db: &Connection, limit: i64) -> Result<(usize, usize)> {
     Ok((done, 0))
 }
 
-fn curate_chunk(
-    db: &Connection,
-    key: &str,
-    chunk: &[Pending],
-) -> Result<()> {
+fn curate_chunk(db: &Connection, key: &str, chunk: &[Pending]) -> Result<()> {
     let mut questions = serde_json::Map::new();
     let mut candidates = Vec::with_capacity(chunk.len());
     for (i, (name, desc, lang, topics, stars)) in chunk.iter().enumerate() {
@@ -122,7 +124,9 @@ fn curate_chunk(
             .unwrap_or("Other");
         let fit = answers.get(format!("fit_{i}"));
         let score = fit.and_then(|v| v.get("score")).and_then(|v| v.as_f64());
-        let conf = fit.and_then(|v| v.get("confidence")).and_then(|v| v.as_f64());
+        let conf = fit
+            .and_then(|v| v.get("confidence"))
+            .and_then(|v| v.as_f64());
         let hash = content_hash(name, desc.as_deref());
         db.execute(
             "INSERT OR REPLACE INTO decisions(repo,content_hash,schema_v,model,choice,score,confidence,tags,evidence)

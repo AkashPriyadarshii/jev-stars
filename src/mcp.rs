@@ -31,49 +31,74 @@ pub fn run(db: &Connection) -> Result<()> {
                     .pointer("/params/protocolVersion")
                     .and_then(|v| v.as_str())
                     .unwrap_or("");
-                let ver = if SUPPORTED.contains(&want) { want } else { PROTOCOL_VERSION };
-                respond(&mut stdout, &json!({
-                    "jsonrpc": "2.0", "id": id,
-                    "result": {
-                        "protocolVersion": ver,
-                        "serverInfo": { "name": "jev-stars", "version": "0.1.0" },
-                        "capabilities": { "tools": {} },
-                    }
-                }))?;
-            }
-            "tools/list" => respond(&mut stdout, &json!({
-                "jsonrpc": "2.0", "id": id,
-                "result": { "tools": [
-                    tool("search", "Search your GitHub stars (FTS + filters). Offline.", &["query"]),
-                    tool("context", "Agent-ready bounded object: health + Jev + evidence. Offline after sync. Start here.", &["query"]),
-                    tool("status", "Dead/alive rollup over all stars. Offline.", &[]),
-                    tool("sync", "Pull latest stars via gh api. Needs net.", &[]),
-                    tool("export", "Write STARS.md awesome-list. Offline.", &[]),
-                ]}
-            }))?,
-            "tools/call" => {
-                let name = req.pointer("/params/name").and_then(|n| n.as_str()).unwrap_or("");
-                let args = req.pointer("/params/arguments").cloned().unwrap_or(json!({}));
-                let out = call(db, name, &args);
-                match out {
-                    Ok(v) => respond(&mut stdout, &json!({
+                let ver = if SUPPORTED.contains(&want) {
+                    want
+                } else {
+                    PROTOCOL_VERSION
+                };
+                respond(
+                    &mut stdout,
+                    &json!({
                         "jsonrpc": "2.0", "id": id,
                         "result": {
-                            "isError": false,
-                            "content": [{ "type": "text", "text": serde_json::to_string_pretty(&v)? }],
-                            "structuredContent": v,
+                            "protocolVersion": ver,
+                            "serverInfo": { "name": "jev-stars", "version": "0.1.0" },
+                            "capabilities": { "tools": {} },
                         }
-                    }))?,
-                    Err(e) => respond(&mut stdout, &json!({
-                        "jsonrpc": "2.0", "id": id,
-                        "error": { "code": -32000, "message": e.to_string() }
-                    }))?,
+                    }),
+                )?;
+            }
+            "tools/list" => respond(
+                &mut stdout,
+                &json!({
+                    "jsonrpc": "2.0", "id": id,
+                    "result": { "tools": [
+                        tool("search", "Search your GitHub stars (FTS + filters). Offline.", &["query"]),
+                        tool("context", "Agent-ready bounded object: health + Jev + evidence. Offline after sync. Start here.", &["query"]),
+                        tool("status", "Dead/alive rollup over all stars. Offline.", &[]),
+                        tool("sync", "Pull latest stars via gh api. Needs net.", &[]),
+                        tool("export", "Write STARS.md awesome-list. Offline.", &[]),
+                    ]}
+                }),
+            )?,
+            "tools/call" => {
+                let name = req
+                    .pointer("/params/name")
+                    .and_then(|n| n.as_str())
+                    .unwrap_or("");
+                let args = req
+                    .pointer("/params/arguments")
+                    .cloned()
+                    .unwrap_or(json!({}));
+                let out = call(db, name, &args);
+                match out {
+                    Ok(v) => respond(
+                        &mut stdout,
+                        &json!({
+                            "jsonrpc": "2.0", "id": id,
+                            "result": {
+                                "isError": false,
+                                "content": [{ "type": "text", "text": serde_json::to_string_pretty(&v)? }],
+                                "structuredContent": v,
+                            }
+                        }),
+                    )?,
+                    Err(e) => respond(
+                        &mut stdout,
+                        &json!({
+                            "jsonrpc": "2.0", "id": id,
+                            "error": { "code": -32000, "message": e.to_string() }
+                        }),
+                    )?,
                 }
             }
-            _ => respond(&mut stdout, &json!({
-                "jsonrpc": "2.0", "id": id,
-                "error": { "code": -32601, "message": format!("method '{method}' not found") }
-            }))?,
+            _ => respond(
+                &mut stdout,
+                &json!({
+                    "jsonrpc": "2.0", "id": id,
+                    "error": { "code": -32601, "message": format!("method '{method}' not found") }
+                }),
+            )?,
         }
     }
     Ok(())
@@ -98,7 +123,11 @@ fn tool(name: &str, desc: &str, required: &[&str]) -> Value {
 }
 
 fn call(db: &Connection, name: &str, args: &Value) -> Result<Value> {
-    let limit = args.get("limit").and_then(|l| l.as_i64()).unwrap_or(10).clamp(1, 50);
+    let limit = args
+        .get("limit")
+        .and_then(|l| l.as_i64())
+        .unwrap_or(10)
+        .clamp(1, 50);
     match name {
         "search" => {
             let q = req_str(args, "query")?;
@@ -110,11 +139,14 @@ fn call(db: &Connection, name: &str, args: &Value) -> Result<Value> {
                 args.get("alive").and_then(|v| v.as_bool()).unwrap_or(false),
                 limit,
             )?;
-            Ok(json!(hits.iter().map(|h| json!({
-                "repo": h.full_name, "stars": h.stars,
-                "language": h.language, "license": h.license,
-                "archived": h.archived, "url": h.url,
-            })).collect::<Vec<_>>()))
+            Ok(json!(hits
+                .iter()
+                .map(|h| json!({
+                    "repo": h.full_name, "stars": h.stars,
+                    "language": h.language, "license": h.license,
+                    "archived": h.archived, "url": h.url,
+                }))
+                .collect::<Vec<_>>()))
         }
         "context" => {
             let q = req_str(args, "query")?;
@@ -130,7 +162,10 @@ fn call(db: &Connection, name: &str, args: &Value) -> Result<Value> {
             Ok(json!({ "synced": n }))
         }
         "export" => {
-            let path = args.get("path").and_then(|p| p.as_str()).unwrap_or("STARS.md");
+            let path = args
+                .get("path")
+                .and_then(|p| p.as_str())
+                .unwrap_or("STARS.md");
             let n = crate::export::export(db, path)?;
             Ok(json!({ "exported": n, "path": path }))
         }

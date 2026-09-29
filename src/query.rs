@@ -55,8 +55,7 @@ fn days_ago(pushed_at: &Option<String>) -> Option<i64> {
     let date = s.get(..10)?;
     let (y, rest) = date.split_once('-')?;
     let (m, d) = rest.split_once('-')?;
-    let (y, m, d): (i64, i64, i64) =
-        (y.parse().ok()?, m.parse().ok()?, d.parse().ok()?);
+    let (y, m, d): (i64, i64, i64) = (y.parse().ok()?, m.parse().ok()?, d.parse().ok()?);
     // days_from_civil (Howard Hinnant). No chrono dep.
     let y = if m <= 2 { y - 1 } else { y };
     let era = y.div_euclid(400);
