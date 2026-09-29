@@ -42,7 +42,8 @@ header nav a:hover { color: var(--accent); }
   border: 0; border-radius: 8px; padding: 6px 14px; font-weight: 700; cursor: pointer;
 }
 .badges { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-section { padding: 36px 0; }
+section { padding: 48px 0; }
+section + section { border-top: 1px solid var(--overlay); }
 h2 { font-size: 1.4rem; margin: 0 0 16px; }
 table { width: 100%; border-collapse: collapse; font-size: 15px; }
 th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--overlay); }
@@ -59,6 +60,18 @@ pre {
 .cmds .row:nth-child(odd) { background: var(--surface); }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } .cmds .row { grid-template-columns: 1fr; gap: 4px; } }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0; max-width: 640px; }
+.stats div { background: var(--surface); border: 1px solid var(--overlay); border-radius: 12px; padding: 12px 16px; }
+.stats strong { display: block; font-size: 1.5rem; color: var(--accent); }
+.stats span { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.bars { display: grid; gap: 10px; max-width: 560px; }
+.bar span { font-family: var(--mono); font-size: 13px; color: var(--secondary); }
+.bar i { display: block; height: 8px; background: var(--accent); border-radius: 9999px; margin-top: 4px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+.tab { background: var(--bg); color: var(--secondary); border: 1px solid var(--overlay); border-radius: 9999px; padding: 6px 16px; font-size: 14px; cursor: pointer; }
+.tab.on { background: var(--surface); color: var(--text); border-color: var(--accent); }
+.cmd button:active, .tab:active { transform: scale(0.97); transition: transform 100ms ease-out; }
+@media (max-width: 640px) { .stats { grid-template-columns: repeat(2, 1fr); } }
 .reveal { opacity: 0; transform: translateY(12px); transition: opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1); }
 .reveal.in { opacity: 1; transform: none; }
 a { color: var(--accent); }

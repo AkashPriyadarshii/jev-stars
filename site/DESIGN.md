@@ -34,8 +34,9 @@
 
 ## Layout
 
-- Single page: header (logo + nav + install cmd) / hero (H1 + one-liner + install + badges) / trust table / commands grid / MCP block / architecture / limits / ecosystem footer (mandatory order: Ecosystem, Author, Social, closer).
-- Max width 960px, gutters 24px. Commands as definition rows, not 3 equal cards.
+- Single page (scope gate: one tool, one conversion = install). Sections: header / hero (H1 + lede + install + badges + live stat strip) / trust table / language bars (real counts, CSS widths) / top repos table (real top-6) / commands rows / install tabs (cargo, binary, source) / MCP block / architecture / FAQ (GEO citation block) / limits / ecosystem footer (mandatory order: Ecosystem, Author, Social, closer).
+- Max width 1080px, gutters 24px, 96px between sections (Linear section token). Commands as definition rows, not 3 equal cards.
+- Apple motion: feedback on press (`:active` scale 0.97, instant), no entrance choreography beyond one 500ms reveal; `prefers-reduced-motion` kills it.
 - Contrast: body text on substrate >= 7:1. Secondary >= 4.5:1. Verified pairs: `#ece8e2` on `#0f1114` (15.9:1), `#a8a29a` on `#0f1114` (7.1:1).
 
 ## Zero-simulation contracts

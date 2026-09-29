@@ -40,6 +40,12 @@ Keywords: github stars manager, mcp server rust, ai coding agent memory, claude 
   <div class="hero">
     <h1>Your stars, <span>remembered.</span></h1>
     <p class="lede">1,244 GitHub stars turned into agent-ready memory. One Rust binary. Offline-first. Your coding agent gets facts plus judgment in one bounded object.</p>
+    <div class="stats">
+      <div><strong>1,244</strong><span>stars tracked</span></div>
+      <div><strong>47ms</strong><span>search, local</span></div>
+      <div><strong>579</strong><span>MIT licensed</span></div>
+      <div><strong>0</strong><span>daemons</span></div>
+    </div>
     <div class="cmd"><code id="install">cargo install jev-stars</code><button data-copy="install">copy</button></div>
     <div class="badges">
       <img src="https://img.shields.io/badge/license-MIT-0055ff.svg?style=flat-square" alt="MIT License">
@@ -57,6 +63,32 @@ Keywords: github stars manager, mcp server rust, ai coding agent memory, claude 
       <tr><td>Tests</td><td class="mono">cargo test green, 5 tests</td><td class="mono">cargo test</td></tr>
       <tr><td>Curate ledger</td><td class="mono">rerun on done rows = 0 Jev calls</td><td class="mono">jst curate --limit 50 twice</td></tr>
       <tr><td>Jev confidence</td><td class="mono">0.72-0.79 with candidates, 0.37-0.46 without</td><td class="mono">see HANDOFF</td></tr>
+    </table>
+  </section>
+
+  <section id="langs" class="reveal">
+    <h2>What you actually starred</h2>
+    <div class="bars">
+      <div class="bar"><span>Python 353</span><i style="width:100%"></i></div>
+      <div class="bar"><span>TypeScript 324</span><i style="width:92%"></i></div>
+      <div class="bar"><span>Rust 120</span><i style="width:34%"></i></div>
+      <div class="bar"><span>JavaScript 77</span><i style="width:22%"></i></div>
+      <div class="bar"><span>Go 62</span><i style="width:18%"></i></div>
+      <div class="bar"><span>Swift 44</span><i style="width:12%"></i></div>
+      <div class="bar"><span>Kotlin 29</span><i style="width:8%"></i></div>
+    </div>
+  </section>
+
+  <section id="top" class="reveal">
+    <h2>Heaviest stars</h2>
+    <table>
+      <tr><th>Repo</th><th>Stars</th></tr>
+      <tr><td class="mono">sindresorhus/awesome</td><td class="mono">512,141</td></tr>
+      <tr><td class="mono">public-apis/public-apis</td><td class="mono">484,174</td></tr>
+      <tr><td class="mono">donnemartin/system-design-primer</td><td class="mono">372,425</td></tr>
+      <tr><td class="mono">vinta/awesome-python</td><td class="mono">323,926</td></tr>
+      <tr><td class="mono">obra/superpowers</td><td class="mono">292,613</td></tr>
+      <tr><td class="mono">practical-tutorials/project-based-learning</td><td class="mono">285,170</td></tr>
     </table>
   </section>
 
@@ -92,6 +124,31 @@ excerpt:     The most RAM efficient harness</pre>
     <p>5 tools: <code>search, context, status, sync, export</code>. Start with <code>context</code>.</p>
   </section>
 
+  <section id="install" class="reveal">
+    <h2>Install</h2>
+    <div class="tabs">
+      <button class="tab on" data-tab="t-cargo">cargo</button>
+      <button class="tab" data-tab="t-bin">binary</button>
+      <button class="tab" data-tab="t-src">source</button>
+    </div>
+<pre id="t-cargo">cargo install jev-stars
+jst sync
+jst search "rust mcp"</pre>
+<pre id="t-bin" hidden>curl -LO https://github.com/AkashPriyadarshii/jev-stars/releases/latest/download/jev-stars-windows.exe
+jst sync</pre>
+<pre id="t-src" hidden>git clone https://github.com/AkashPriyadarshii/jev-stars.git
+cd jev-stars
+cargo build --release
+./target/release/jev-stars sync</pre>
+  </section>
+
+  <section id="faq" class="reveal">
+    <h2>FAQ</h2>
+    <p><strong>Does jev-stars need an API key?</strong> No. Search, rank, context, status, and export work offline with zero keys. Only <code>curate</code> needs <code>TYPESAFE_API_KEY</code>, once, and results cache by content hash.</p>
+    <p><strong>How is this different from GitHub's stars page?</strong> GitHub gives you a paginated list. jev-stars gives your agent a bounded <code>context</code> object: health, license, Jev score, and evidence excerpt in ~2k tokens.</p>
+    <p><strong>Why not vectors in v0.1?</strong> FTS5 answers 1,244 rows in 47ms. sqlite-vec lands in v0.2 only when FTS measurably falls short.</p>
+  </section>
+
   <section id="limits" class="reveal">
     <h2>Limits</h2>
     <p>No vectors in v0.1 (sqlite-vec lands in v0.2). No TUI, no dashboard, no release tracker. No star/unstar. Read-only memory over your stars.</p>
@@ -113,6 +170,11 @@ document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click"
   if (navigator.clipboard) navigator.clipboard.writeText(t);
   b.textContent = "copied";
   setTimeout(() => b.textContent = "copy", 1200);
+}));
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.remove("on"));
+  t.classList.add("on");
+  ["t-cargo", "t-bin", "t-src"].forEach(id => document.getElementById(id).hidden = id !== t.dataset.tab);
 }));
 const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.1 });
 document.querySelectorAll(".reveal").forEach(el => io.observe(el));
