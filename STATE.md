@@ -1,28 +1,26 @@
 # STATE
 
-> Updated: 2026-09-29 (IST). Status: MD skeleton. No code yet. No remote yet.
+> Updated: 2026-09-29 (IST). Status: v0.1 shipped. Remote live.
 
 ## Done
 
 - Researched landscape (mine + ChatGPT deep research, 14 tools mapped).
 - Verified name: `jev-stars` free on crates.io (404), PyPI (404), no exact GitHub hit.
-- Verified corpus: 1,243 starred repos via `gh api` Link header (`rel="last" page=1243`).
-- Read ziggygrep MDs (CLAUDE/AGENTS/PRD/ARCHITECTURE/DESIGN/HANDOFF/README/CHANGELOG) + My-Starred-Repos MDs (CLAUDE/USAGE/STATE_HANDOFF/CHANGELOG) as templates.
-- Wrote MD skeleton in this folder. No code, no `gh repo create` yet.
-- Direction locked 2026-09-29: agentic-first, Jev optional. `context` serves health + FTS + evidence with zero Jev rows; `curate` is the only key-gated command.
+- Corpus: 1,244 starred repos synced (Link header said 1,243; live pull = 1,244).
+- Chunk 1: `sync + store` green. Chunk 2: `search + context` green (47ms).
+- Chunk 3: `curate` live against Jev (3 repos tagged), `export` 1,236 rows.
+- Chunk 4: `mcp` stdio green, 5 tools. Binary at `~/.cargo/bin/jev-stars.exe`, DB at `~/.jev-stars.db`, pi settings wired.
+- Alias `jst` locked. `target/` purged + gitignored.
+- Direction: agentic-first, Jev optional. `curate` is the only key-gated command.
 
-## Next (needs "go")
+## Next
 
-1. `gh repo create jev-stars --public` + metadata (description, topics, homepage).
-2. Chunk 1: `sync + store` (1243 rows round-trip, `cargo test` green).
-3. Chunk 2: `search + rank + context` (`search "mcp rust"` <100ms).
-4. Chunk 3: `curate + export` (rerun = zero Jev calls).
-5. Chunk 4: `mcp` stdio (pi `context` returns rows).
+1. Push v0.1 (needs "go").
+2. Full `curate` run: 1,244 repos ~415 Jev calls. Recommend `--limit` batches.
+3. v0.2: sqlite-vec hybrid + `similar` tool (only when FTS falls short).
 
 ## Open questions
 
-- Default sync auth: shell out to `gh api` (zero token UI) vs direct HTTPS with stored token. Lean `gh` first.
-- Jev schema v1 tags: fixed taxonomy (reuse My-Starred-Repos 13 categories) vs free tags. Lean fixed first.
 - sqlite-vec in v0.2: yes per benchmark, not now.
 
 ## Identity

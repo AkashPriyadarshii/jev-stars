@@ -21,6 +21,9 @@ const CATEGORIES: &[&str] = &[
     "Other",
 ];
 
+/// Pending repo row for Jev batching.
+type Pending = (String, Option<String>, Option<String>, String, i64);
+
 /// Optional Jev enrichment. No key = exit 0, curated 0, nothing touched.
 /// Ledger key (repo, content_hash, schema_v, model): rerun on unchanged
 /// corpus = zero HTTP calls.
@@ -36,7 +39,7 @@ pub fn curate(db: &Connection, limit: i64) -> Result<(usize, usize)> {
            (SELECT repo FROM decisions WHERE schema_v = ?1 AND model = ?2)
          ORDER BY stars DESC LIMIT ?3",
     )?;
-    let pending: Vec<(String, Option<String>, Option<String>, String, i64)> = stmt
+    let pending: Vec<Pending> = stmt
         .query_map(rusqlite::params![SCHEMA_V, MODEL, limit], |r| {
             Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get::<_, Option<String>>(3)?.unwrap_or_default(), r.get(4)?))
         })?
@@ -61,21 +64,18 @@ pub fn curate(db: &Connection, limit: i64) -> Result<(usize, usize)> {
 fn curate_chunk(
     db: &Connection,
     key: &str,
-    chunk: &[(String, Option<String>, Option<String>, String, i64)],
+    chunk: &[Pending],
 ) -> Result<()> {
-    let mut criteria = serde_json::Map::new();
     let mut questions = serde_json::Map::new();
-    for (i, (name, desc, lang, topics, _)) in chunk.iter().enumerate() {
-        criteria.insert(
-            format!("repo_{i}"),
-            json!(format!(
-                "{} [{}] {} {}",
-                name,
-                lang.as_deref().unwrap_or("?"),
-                desc.as_deref().unwrap_or(""),
-                topics
-            )),
-        );
+    let mut candidates = Vec::with_capacity(chunk.len());
+    for (i, (name, desc, lang, topics, stars)) in chunk.iter().enumerate() {
+        // Jev judges on state, not just question text: blind calls score ~0.1 conf.
+        candidates.push(json!({
+            "id": name, "name": name,
+            "description": desc.as_deref().unwrap_or(""),
+            "language": lang.as_deref().unwrap_or("?"),
+            "topics": topics, "stars": stars,
+        }));
         questions.insert(
             format!("cat_{i}"),
             json!({
@@ -100,7 +100,7 @@ fn curate_chunk(
     }
     let payload = json!({
         "model": MODEL,
-        "state": { "count": chunk.len() },
+        "state": { "count": chunk.len(), "candidates": candidates },
         "questions": questions,
     });
     let resp: serde_json::Value = ureq::post(ENDPOINT)
@@ -120,19 +120,16 @@ fn curate_chunk(
             .and_then(|v| v.get("choice"))
             .and_then(|v| v.as_str())
             .unwrap_or("Other");
-        let score = answers
-            .get(format!("fit_{i}"))
-            .and_then(|v| v.get("score"))
-            .and_then(|v| v.as_f64())
-            .unwrap_or(1.0);
+        let fit = answers.get(format!("fit_{i}"));
+        let score = fit.and_then(|v| v.get("score")).and_then(|v| v.as_f64());
+        let conf = fit.and_then(|v| v.get("confidence")).and_then(|v| v.as_f64());
         let hash = content_hash(name, desc.as_deref());
         db.execute(
-            "INSERT OR REPLACE INTO decisions(repo,content_hash,schema_v,model,choice,score,tags,evidence)
-             VALUES(?,?,?,?,?,?,?,?)",
-            rusqlite::params![name, hash, SCHEMA_V, MODEL, cat, score, cat, desc],
+            "INSERT OR REPLACE INTO decisions(repo,content_hash,schema_v,model,choice,score,confidence,tags,evidence)
+             VALUES(?,?,?,?,?,?,?,?,?)",
+            rusqlite::params![name, hash, SCHEMA_V, MODEL, cat, score, conf, cat, desc],
         )?;
     }
-    let _ = criteria;
     Ok(())
 }
 

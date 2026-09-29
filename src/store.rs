@@ -43,9 +43,10 @@ pub fn open(path: &str) -> Result<Connection> {
         );
         CREATE TABLE IF NOT EXISTS decisions(
             repo TEXT, content_hash TEXT, schema_v INTEGER, model TEXT,
-            choice TEXT, score REAL, tags TEXT, evidence TEXT, ts TEXT,
+            choice TEXT, score REAL, confidence REAL, tags TEXT, evidence TEXT, ts TEXT,
             PRIMARY KEY(repo, content_hash, schema_v, model)
-        );",
+        );
+        CREATE INDEX IF NOT EXISTS idx_decisions_repo ON decisions(repo);",
     )?;
     Ok(db)
 }
@@ -152,21 +153,31 @@ pub fn search(
     rows.collect::<std::result::Result<Vec<_>, _>>().map_err(anyhow::Error::from)
 }
 
-/// Latest Jev decision per repo: (choice, score). Missing = never curated.
+/// Latest Jev decision per repo: (choice, score, confidence). Missing = never curated.
+/// Scores arrive 0-3 from the API; normalized to 0-1 here so agents compare sanely.
+pub type Decision = (Option<String>, Option<f64>, Option<f64>);
+
 pub fn decisions_for(
     db: &Connection,
     repos: &[String],
-) -> Result<std::collections::HashMap<String, (Option<String>, Option<f64>)>> {
+) -> Result<std::collections::HashMap<String, Decision>> {
+    // ponytail: one IN query, not N round-trips.
+    if repos.is_empty() {
+        return Ok(std::collections::HashMap::new());
+    }
+    let placeholders = repos.iter().map(|_| "?").collect::<Vec<_>>().join(",");
+    let sql = format!(
+        "SELECT repo, choice, score / 3.0, confidence FROM decisions WHERE repo IN ({placeholders})"
+    );
+    let mut stmt = db.prepare(&sql)?;
+    let rows = stmt.query_map(
+        rusqlite::params_from_iter(repos.iter()),
+        |r| Ok((r.get::<_, String>(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+    )?;
     let mut map = std::collections::HashMap::new();
-    let mut stmt =
-        db.prepare("SELECT choice, score FROM decisions WHERE repo = ?1 LIMIT 1")?;
-    for repo in repos {
-        let row: Option<(Option<String>, Option<f64>)> = stmt
-            .query_row([repo], |r| Ok((r.get(0)?, r.get(1)?)))
-            .ok();
-        if let Some(v) = row {
-            map.insert(repo.clone(), v);
-        }
+    for row in rows {
+        let (repo, choice, score, conf): (String, Option<String>, Option<f64>, Option<f64>) = row?;
+        map.insert(repo, (choice, score, conf));
     }
     Ok(map)
 }

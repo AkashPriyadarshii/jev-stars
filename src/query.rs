@@ -39,6 +39,7 @@ pub fn context(db: &Connection, q: &str, limit: i64) -> Result<serde_json::Value
                 "maintenance": if scoring::alive(h.archived, days) { "active" } else { "stale" },
                 "jev_choice": jev.get(&h.full_name).and_then(|d| d.0.clone()),
                 "jev_score": jev.get(&h.full_name).and_then(|d| d.1),
+                "jev_confidence": jev.get(&h.full_name).and_then(|d| d.2),
                 "jev_tags": jev.get(&h.full_name).and_then(|d| d.0.clone()),
                 "why_matched": format!("FTS({q})"),
                 "readme_excerpt": excerpt(h.description.as_deref()),
