@@ -2,7 +2,7 @@
 
 ## What is this?
 
-Local-first Rust CLI turning 1,243 GitHub stars into agent-ready memory.
+Local-first Rust CLI turning 1,244 GitHub stars into agent-ready memory.
 You star repos, you forget why. pi asks `context`, gets facts + judgment
 in ~2k tokens instead of 50 README dumps.
 

@@ -6,7 +6,7 @@
 
 - Researched landscape (mine + ChatGPT deep research, 14 tools mapped).
 - Verified name: `jev-stars` free on crates.io (404), PyPI (404), no exact GitHub hit.
-- Corpus: 1,244 starred repos synced (Link header said 1,243; live pull = 1,244).
+- Corpus: 1,244 starred repos synced (Link header said 1,244; live pull = 1,244).
 - Chunk 1: `sync + store` green. Chunk 2: `search + context` green (47ms).
 - Chunk 3: `curate` live against Jev (3 repos tagged), `export` 1,236 rows.
 - Chunk 4: `mcp` stdio green, 5 tools. Binary at `~/.cargo/bin/jev-stars.exe`, DB at `~/.jev-stars.db`, pi settings wired.

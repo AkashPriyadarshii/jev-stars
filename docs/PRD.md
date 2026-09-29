@@ -5,7 +5,7 @@
 Developers star 1,000+ repos and lose them. GitHub's stars page is a
 paginated list with weak search. Coding agents recommending libraries
 guess from stale training data: they suggest archived repos, wrong
-licenses, dead forks. 1,243 stars (verified 2026-09-29 via `gh api`)
+licenses, dead forks. 1,244 stars (verified 2026-09-29 via `gh api`)
 sit unused because no tool turns them into agent-queryable memory.
 
 ## Product
@@ -15,13 +15,13 @@ the truth. Jev adds judgment once, cached by content hash.
 
 ## Users
 
-- Akash daily-driving pi with 1,243 stars.
+- Akash daily-driving pi with 1,244 stars.
 - FOSS devs with 500+ stars, 8GB-class machines, no budget for dashboards.
 - Coding agents (pi, Claude Code, Cursor, Codex) needing bounded, trustworthy repo context over HTTP-free stdio.
 
 ## v0.1 scope
 
-- `sync`: `gh api` paginated pull + ETag, upsert 1,243 rows, preserves ledger.
+- `sync`: `gh api` paginated pull + ETag, upsert 1,244 rows, preserves ledger.
 - `search`: FTS5 + `--lang/--topic/--alive`, ranked, <100ms.
 - `context`: bounded JSON (repo, url, starred_at, last_push, archived, license, language, topics, maintenance, Jev choice/score/tags, why_matched, readme excerpt).
 - `status`: offline dead/alive/license rollup.
@@ -47,7 +47,7 @@ the truth. Jev adds judgment once, cached by content hash.
 
 ## Success criteria
 
-- Correct: sync count == GitHub starred count (1,243 on 2026-09-29).
+- Correct: sync count == GitHub starred count (1,244 on 2026-09-29).
 - Fast: `search` p50 <100ms on 8GB i3. Rerun `curate` = 0 Jev calls.
 - Small: one binary, SQLite file ~6MB, no daemon.
 - Agent check: pi `context "rust mcp"` returns alive-first ranked rows with evidence, with and without Jev rows present.

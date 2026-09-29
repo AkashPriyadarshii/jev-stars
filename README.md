@@ -96,9 +96,11 @@ doskey jst=jev-stars $*
 ```
 
 ```console
-$ jst context "rust mcp server" --limit 3
-modelcontextprotocol/rust-sdk  alive  MIT  score 0.91  pushed 3d ago
-why: FTS(mcp^3,rust^2) + Jev(tags=[mcp,rust-sdk], relevance=0.91)
+$ jst context "rust mcp" --limit 1
+repo:        1jehuang/jcode (20,200 stars, MIT)
+maintenance: active, pushed 2026-09-29
+why:         FTS(rust mcp)
+excerpt:     The most RAM efficient harness
 ```
 
 ---
@@ -112,7 +114,7 @@ Dashboards organize stars for humans. Agents need memory with opinions.
 | One binary, local SQLite | `cargo install jev-stars`. No server, no account, works on flight wifi after sync |
 | `context`, not `search` | Returns health + Jev score + evidence excerpt, ~2k tokens. Agent reasons, never guesses |
 | Deterministic health | Archived, last push, license computed locally. No LLM in the scoring path |
-| Cached Jev ledger | Same content hash + schema = zero re-inference. 1,243 repos cost once, not every run |
+| Cached Jev ledger | Same content hash + schema = zero re-inference. 1,244 repos cost once, not every run |
 | Built-in MCP stdio | Same functions as CLI. pi connects in one config block |
 
 ---

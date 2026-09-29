@@ -2,7 +2,7 @@
 
 ## What is this?
 
-Local-first Rust CLI turning 1,243 GitHub stars into agent-ready memory.
+Local-first Rust CLI turning 1,244 GitHub stars into agent-ready memory.
 One binary. SQLite + FTS5. No dashboard, no daemon, no vectors in v0.1.
 
 ## Build
@@ -41,7 +41,7 @@ binary. clap reads argv[0], so a symlink named `jst` also works.
 - `store.rs`: repos table + FTS5 + decision ledger.
 - `scoring.rs`: deterministic health, no LLM. One file.
 - `curate.rs` (optional, needs key): Jev batched, content-hash cached. N changed = N calls. Skipped entirely without key.
-- `query.rs`: FTS + filters + rank, <100ms on 1,243 rows. Jev columns nullable.
+- `query.rs`: FTS + filters + rank, <100ms on 1,244 rows. Jev columns nullable.
 - `mcp.rs`: stdio server, same fns as CLI. 5 tools.
 - No key = full search + rank + context + status + export. `curate` is the only gated command.
 
