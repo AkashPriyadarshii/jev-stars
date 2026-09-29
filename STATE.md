@@ -22,6 +22,7 @@
 ## Open questions
 
 - sqlite-vec in v0.2: yes per benchmark, not now.
+- Full curate: 59/1244 decided. Remaining ~1,185 repos ~395 Jev calls in `--limit` batches.
 
 ## Identity
 

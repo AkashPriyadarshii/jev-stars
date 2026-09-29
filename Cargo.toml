@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 description = "Local-first GitHub stars memory for AI coding agents"
 license = "MIT"
+repository = "https://github.com/AkashPriyadarshii/jev-stars"
+homepage = "https://github.com/AkashPriyadarshii/jev-stars"
+keywords = ["github-stars", "mcp", "typesafe-ai", "sqlite", "cli"]
+categories = ["command-line-utilities", "development-tools"]
 
 [[bin]]
 name = "jev-stars"

@@ -1,28 +1,67 @@
+---
+title: "jev-stars: Local-First GitHub Stars Memory for AI Coding Agents (Rust CLI + MCP)"
+description: "Open-source Rust CLI turning 1244 GitHub stars into agent-ready context. Offline-first SQLite + FTS5, deterministic repo health, cached Jev AI tags, built-in MCP server for Claude Code, Cursor, pi. MIT."
+canonical: "https://github.com/AkashPriyadarshii/jev-stars"
+image: "https://github.com/AkashPriyadarshii/jev-stars/raw/main/assets/jev-stars.svg"
+author: "Akash Priyadarshi"
+license: "MIT"
+language: "en"
+topic: "developer-tools"
+tags:
+  - github-stars-manager
+  - github-stars-organizer
+  - mcp-server-rust
+  - ai-coding-agent-memory
+  - claude-code-mcp
+  - sqlite-fts5
+  - jev-ai
+  - starred-repos-cli
+  - offline-first-cli
+  - rust-cli
+  - model-context-protocol
+  - developer-tools
+keywords:
+  - github stars manager
+  - github stars organizer
+  - mcp server rust
+  - ai coding agent memory
+  - claude code mcp
+  - sqlite fts5
+  - starred repos cli
+  - offline first cli
+---
+
 <!--
 Title: jev-stars - Local-First GitHub Stars Memory for AI Coding Agents (Rust CLI + MCP)
-Description: Open-source Rust CLI turning 1243 GitHub stars into agent-ready context. Offline-first SQLite + FTS5, deterministic repo health, cached Jev AI tags, built-in MCP server for Claude Code, Cursor, pi. MIT.
+Description: Open-source Rust CLI turning 1244 GitHub stars into agent-ready context. Offline-first SQLite + FTS5, deterministic repo health, cached Jev AI tags, built-in MCP server for Claude Code, Cursor, pi. MIT.
 Keywords: github stars manager, github stars organizer, mcp server rust, ai coding agent memory, claude code mcp, sqlite fts5, jev ai, starred repos cli, offline-first cli, rust cli
 -->
 
+**Support:** fuel the next build: [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/AkashPriyadarshi)
+
 <div align="center">
+  <img src="assets/jev-stars.svg" alt="jev-stars logo: gold star over terminal prompt" width="96">
   <h1>jev-stars</h1>
-  <p><strong>Your 1,243 GitHub stars, turned into agent-ready memory. One Rust binary. Offline-first.</strong></p>
+  <p><strong>Your 1,244 GitHub stars, turned into agent-ready memory. One Rust binary. Offline-first.</strong></p>
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0055ff.svg?style=flat-square" alt="MIT License" /></a>
     <a href="https://www.rust-lang.org"><img src="https://img.shields.io/badge/rust-1.70+-ce422b.svg?style=flat-square&logo=rust" alt="Rust 1.70+" /></a>
-    <a href="#limits-and-non-goals"><img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-2a3138.svg?style=flat-square" alt="Windows, Linux, macOS" /></a>
+    <a href="#how-far-to-trust-it"><img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-2a3138.svg?style=flat-square" alt="Windows, Linux, macOS" /></a>
   </p>
   <p>By <strong>Akash Priyadarshi</strong> · MIT · Rust · zero runtime services</p>
   <p>
     <a href="#why-it-earns-a-slot">Why</a> ·
     <a href="#quickstart">Quickstart</a> ·
     <a href="#command-reference">Commands</a> ·
+    <a href="#how-far-to-trust-it">Trust</a> ·
     <a href="#mcp">MCP</a> ·
     <a href="#architecture">Layout</a> ·
     <a href="#limits-and-non-goals">Limits</a> ·
     <a href="#ecosystem">Ecosystem</a>
   </p>
 </div>
+
+[![stars](https://img.shields.io/github/stars/AkashPriyadarshii/jev-stars?style=flat-square&label=stars)](https://github.com/AkashPriyadarshii/jev-stars/stargazers) [![crates.io](https://img.shields.io/crates/v/jev-stars?style=flat-square)](https://crates.io/crates/jev-stars) [![downloads](https://img.shields.io/crates/d/jev-stars?style=flat-square)](https://crates.io/crates/jev-stars) [![release](https://img.shields.io/github/v/release/AkashPriyadarshii/jev-stars?style=flat-square&label=release)](https://github.com/AkashPriyadarshii/jev-stars/releases)
 
 ---
 
@@ -126,6 +165,22 @@ Global: `--json`, `--limit N` (default 10, max 50). Exit codes: 0 ok, 1 no match
 
 ---
 
+## How far to trust it
+
+Every number below is measured on this machine (i3-1115G4, 8GB, Windows 11), never a claim.
+
+| Check | Result | Rerun |
+|---|---|---|
+| Sync | 1,244 repos, 8 archived | `jst sync` + `jst status` |
+| Search latency | 47-49ms on 1,244 rows | `time jst search "rust" --limit 5` |
+| Test suite | `cargo test` green, 5 tests (store 1, scoring 1, query 2, export 1) | per-file `cargo test` |
+| Clippy | `cargo clippy --all-targets --locked -- -D warnings` clean | same |
+| Curate ledger | rerun on done rows = zero Jev calls | `jst curate --limit 50` twice |
+| Jev confidence | 0.72-0.79 with candidates in state, 0.37-0.46 without | see HANDOFF |
+
+Jev scores arrive 0-3 from the API and read normalized 0-1 in `context`.
+Confidence below 0.5 means you verify the top 2 by hand.
+
 ## Architecture
 
 - **Offline-first.** Net only in `sync` (GitHub) and `curate` (Jev). Queries never touch net.
@@ -141,8 +196,19 @@ src/
   curate.rs   - Jev batch, hash-gated
   query.rs    - FTS + rank + context pack
   export.rs   - STARS.md writer
-  mcp.rs      - rmcp stdio server
+  mcp.rs      - hand-rolled stdio server (no rmcp dep, same fns as CLI)
 ```
+
+---
+
+## Development
+
+```bash
+cargo test
+cargo clippy --all-targets --locked -- -D warnings
+```
+
+Tests live beside the code they cover. Non-trivial logic ships with one runnable check. Keep diffs small: stdlib and installed crates before new deps.
 
 ---
 
@@ -181,7 +247,7 @@ Social: [X/Twitter](https://x.com/Akash__ydv001) · [Threads](https://www.thread
 
 ## Contributors
 
-PRs welcome. Keep it boring: smallest diff that holds, stdlib and installed crates before new deps, one runnable check for non-trivial logic. Run `cargo test` and `cargo clippy -- -D warnings` before you push.
+See [CONTRIBUTING.md](CONTRIBUTING.md). PRs welcome. Keep it boring: smallest diff that holds, stdlib and installed crates before new deps, one runnable check for non-trivial logic. Run `cargo test` and `cargo clippy -- -D warnings` before you push.
 
 ---
 
