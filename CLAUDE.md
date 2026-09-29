@@ -31,6 +31,9 @@ jev-stars export            # STARS.md awesome-list, offline
 
 Global: `--json` machine output, `--limit N` (default 10, max 50).
 
+Alias: `jst` (`js` collides with JavaScript). Shell alias only, no second
+binary. clap reads argv[0], so a symlink named `jst` also works.
+
 ## Architecture
 
 - Offline-first: `sync` + `curate` need net. Everything else reads local SQLite.

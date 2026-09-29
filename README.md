@@ -41,8 +41,23 @@ local-first, no account, no telemetry.
 Jev tagging needs `$TYPESAFE_API_KEY` once; results cache forever keyed by content hash.
 No key: every command except `curate` works at full power.
 
+```bash
+# bash/zsh (~/.bashrc or ~/.zshrc)
+alias jst='jev-stars'
+```
+
+```powershell
+# PowerShell ($PROFILE)
+Set-Alias jst jev-stars
+```
+
+```cmd
+:: cmd (doskey macro)
+doskey jst=jev-stars $*
+```
+
 ```console
-$ jev-stars context "rust mcp server" --limit 3
+$ jst context "rust mcp server" --limit 3
 modelcontextprotocol/rust-sdk  alive  MIT  score 0.91  pushed 3d ago
 why: FTS(mcp^3,rust^2) + Jev(tags=[mcp,rust-sdk], relevance=0.91)
 ```

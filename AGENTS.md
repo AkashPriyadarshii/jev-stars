@@ -43,6 +43,9 @@ with one runnable check.
 
 Global flags: `--json`, `--limit N` (default 10, max 50).
 
+Short alias is `jst`, never `js` (JavaScript collision). Docs-only shell
+alias; binary stays `jev-stars`. No code change: clap is argv[0]-agnostic.
+
 ## Search architecture (read before editing)
 
 - Single SQLite file: `repos` table + FTS5 index + `decisions` ledger.

@@ -20,6 +20,11 @@ Jev fields (`choice`, `score`, `tags`) are null when never curated.
 `--limit N` caps rows (default 10, max 50). Excerpts cut on UTF-8
 boundary. Explicit beats surprise: no silent server-side top-k beyond limit.
 
+## Alias
+
+`jst`, never `js`. Shell alias / symlink only; one binary ships.
+Help text still shows `jev-stars`; clap follows argv[0] at runtime.
+
 ## Errors
 
 `jev-stars: reason` on stderr. Exit 0 ok, 1 no match, 2 usage or I/O error.
