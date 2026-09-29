@@ -136,13 +136,13 @@ pub fn search(
          WHERE repos_fts MATCH ?1"
     );
     if lang.is_some() {
-        sql.push_str(" AND language = ?2");
+        sql.push_str(" AND repos.language = ?2");
     }
     if topic.is_some() {
-        sql.push_str(" AND topics LIKE '%' || ?3 || '%'");
+        sql.push_str(" AND repos.topics LIKE '%' || ?3 || '%'");
     }
     if alive_only {
-        sql.push_str(" AND archived = 0");
+        sql.push_str(" AND repos.archived = 0");
     }
     sql.push_str(" ORDER BY rank, stars DESC LIMIT ?4");
     let mut stmt = db.prepare(&sql)?;
