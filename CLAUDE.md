@@ -66,5 +66,4 @@ memory/       - session notes
 - Small diffs. Stdlib + installed crates before new deps.
 - `anyhow` in binary, no `unwrap` outside tests.
 - Tests beside code. `cargo test` green before push.
-- Git: HTTPS via gh credential manager. Identity: `272530059+AkashPriyadarshii@users.noreply.github.com`
 - MD skeleton before code. No push without "go".

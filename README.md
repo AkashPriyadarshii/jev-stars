@@ -171,7 +171,7 @@ Global: `--json`, `--limit N` (default 10, max 50). Exit codes: 0 ok, 1 no match
 
 ## How far to trust it
 
-Every number below is measured on this machine (i3-1115G4, 8GB, Windows 11), never a claim.
+Every number below is measured, never a claim.
 
 | Check | Result | Rerun |
 |---|---|---|

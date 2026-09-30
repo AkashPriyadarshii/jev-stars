@@ -43,7 +43,7 @@ Errors to stderr, never wipe cache on failed sync.
 `anyhow` in binary. No `unwrap` outside `#[cfg(test)]`. Failed page =
 retry once, then abort with partial-cache-preserved error.
 
-## v0.2 numbers (measured 2026-09-30, i3-1115G4, 8GB)
+## v0.2 numbers (measured 2026-09-30)
 
 - `search` p50 ~16-20ms. `similar` p50 ~330ms (BGE query-encode dominates).
 - `context` p50 ~345ms. Vectors 1,244/1,244 BGE 384D.

@@ -15,9 +15,21 @@ the truth. Jev adds judgment once, cached by content hash.
 
 ## Users
 
-- Akash daily-driving pi with 1,244 stars.
-- FOSS devs with 500+ stars, 8GB-class machines, no budget for dashboards.
-- Coding agents (pi, Claude Code, Cursor, Codex) needing bounded, trustworthy repo context over HTTP-free stdio.
+Two POVs, one binary.
+
+**Akash (pattern mining).** 1,244 stars = vetted working systems across
+Python/TS/Rust/Go. Same problem solved 5 ways in 5 langs. Before any
+build: `similar` finds by meaning, `context` top 3-5 gives alive/license/
+Jev/evidence, clone best, read arch + prod patterns, then design. Agents
+apprentice on proven code instead of hallucinating architecture. `note`
+saves which repo shaped which decision.
+
+**FOSS (zero-friction memory).** Devs with 500+ stars on weak machines.
+No account, no telemetry, works keyless. One binary + one SQLite file.
+Backup = copy file. Only `curate` wants a key; everything else offline.
+
+**Agents.** pi, Claude Code, Cursor, Codex needing bounded, trustworthy
+repo context over HTTP-free stdio.
 
 ## v0.1 scope
 
@@ -52,8 +64,20 @@ the truth. Jev adds judgment once, cached by content hash.
 
 - v0.1 shipped the six commands + MCP. Tag it, lock CLI shape.
 - v0.2 ships hybrid + notes (this doc). Unreleased, local only.
-- v0.3 memory: temporal queries ("starred 6mo ago, still alive?") on notes + pushed_at.
+- v0.3 mining: temporal queries on notes + pushed_at ("starred 6mo ago,
+still alive?"). `context --mine` dumps top-3 READMEs side-by-side for
+agent arch diff.
+- v0.4 gaps: `gaps "<need>"` answers from stars, flags what the web must
+fill. Jev rerank top-10 on demand.
 - v1.0 stable: frozen CLI + MCP contract, release matrix, man page.
+
+## Never (both POVs)
+
+- ANN/HNSW. Exact scan wins to 50k rows.
+- int8 quant. Saves ~1.4MB, risks quality.
+- Graph memory, sessions, repo_events. Notes + pushed_at suffice.
+- TUI, dashboard, cloud sync, release tracker, browser ext.
+- star/unstar mutation. Read-only memory.
 
 ## Success criteria
 

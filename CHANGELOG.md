@@ -2,7 +2,7 @@
 
 All notable changes. Keep a Changelog format: Added, Changed, Fixed per release.
 
-## [Unreleased] - v0.2 (local only, not pushed)
+## [0.2.0] - 2026-09-30
 
 - Added `similar`: hybrid FTS top-50 + BGE-small-en-v1.5 top-50 fused by RRF k=20.
 - Added `embed`: batched + resumable BGE index build. hash384 `--hash` fallback needs zero download.
@@ -18,5 +18,5 @@ All notable changes. Keep a Changelog format: Added, Changed, Fixed per release.
 - `search`/`context`/`status`: offline, <50ms. `context` returns bounded agent JSON with Jev fields (null until curated).
 - `curate` (optional, key-gated): Jev Choice category + Score fit, hash-ledgered, 3 repos/call. Rerun = zero calls.
 - `export`: `STARS.md`, archived skipped, grouped by language.
-- `mcp`: stdio server, 5 tools. Wired into pi settings.
+- `mcp`: stdio server, 5 tools.
 - Alias: `jst` (shell-only, `js` rejected).

@@ -42,7 +42,7 @@ pub fn run(db: &Connection) -> Result<()> {
                         "jsonrpc": "2.0", "id": id,
                         "result": {
                             "protocolVersion": ver,
-                            "serverInfo": { "name": "jev-stars", "version": "0.1.0" },
+                            "serverInfo": { "name": "jev-stars", "version": "0.2.0" },
                             "capabilities": { "tools": {} },
                         }
                     }),
