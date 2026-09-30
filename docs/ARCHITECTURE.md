@@ -4,12 +4,14 @@
 
 - `main.rs`: parse args (clap), dispatch, exit codes 0/1/2.
 - `sync.rs`: shell out to `gh api` (zero token UI), paginate, ETag-gated, upsert.
-- `store.rs`: rusqlite schema. `repos` + FTS5 + `decisions` ledger. One file, ~6MB.
+- `store.rs`: rusqlite schema. `repos` + FTS5 + `decisions` ledger + `embeddings` + `notes`. One file, 4.03MB.
 - `scoring.rs`: deterministic health from stored fields. No net, no LLM.
 - `curate.rs` (optional): hash-gated Jev batch, miss only. Entire module inert without key; queries treat Jev columns as NULL.
-- `query.rs`: FTS query + filters + rank merge + context pack with token cap. Works with zero Jev rows.
+- `vector.rs`: BGE-small-en-v1.5 via fastembed, exact-scan cosine KNN. hash384 fallback needs zero download.
+- `query.rs`: FTS top-50 + vector top-50 fused by RRF k=20, then context pack. Works with zero Jev rows.
+- `notes.rs`: one table `(repo, why, ts)`. Memory layer.
 - `export.rs`: tag-grouped `STARS.md` writer.
-- `mcp.rs`: rmcp stdio. Thin wrappers over `query`/`store` fns. Same code paths as CLI.
+- `mcp.rs`: hand-rolled stdio. Thin wrappers over `query`/`store` fns. Same code paths as CLI.
 
 ## Data flow
 
@@ -40,3 +42,9 @@ Errors to stderr, never wipe cache on failed sync.
 
 `anyhow` in binary. No `unwrap` outside `#[cfg(test)]`. Failed page =
 retry once, then abort with partial-cache-preserved error.
+
+## v0.2 numbers (measured 2026-09-30, i3-1115G4, 8GB)
+
+- `search` p50 ~16-20ms. `similar` p50 ~330ms (BGE query-encode dominates).
+- `context` p50 ~345ms. Vectors 1,244/1,244 BGE 384D.
+- No ANN: 1,244 x 384 exact scan is microseconds. No quant: int8 saves ~1.4MB, unproven quality.

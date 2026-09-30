@@ -4,6 +4,78 @@ use rusqlite::Connection;
 use crate::scoring;
 use crate::store::Hit;
 
+/// RRF-fused hybrid hit: FTS rank + vector rank -> one score.
+/// k=20 per Elastic hybrid experiment; depth 50/50, final top-10 default.
+pub struct HybridHit {
+    pub full_name: String,
+    pub rrf: f64,
+    pub hit: Hit,
+}
+
+pub fn hybrid(
+    db: &Connection,
+    q: &str,
+    limit: i64,
+    use_hash: bool,
+) -> Result<Vec<HybridHit>> {
+    const DEPTH: i64 = 50;
+    const K: f64 = 20.0;
+    let fts = crate::store::search(db, q, None, None, false, DEPTH).unwrap_or_default();
+    let model = if use_hash {
+        "hash384"
+    } else {
+        crate::vector::MODEL_ID
+    };
+    let vec_hits = if crate::vector::indexed_count(db, model).unwrap_or(0) == 0 {
+        Vec::new() // no vectors yet: FTS-only, still answers
+    } else {
+        let qv = if use_hash {
+            crate::vector::hash_embed(q, 384)
+        } else {
+            crate::vector::embed_one(q)?
+        };
+        crate::vector::knn(db, &qv, DEPTH, model).unwrap_or_default()
+    };
+    let vec_rank: std::collections::HashMap<&str, usize> = vec_hits
+        .iter()
+        .enumerate()
+        .map(|(i, (r, _))| (r.as_str(), i))
+        .collect();
+    let mut fused: Vec<HybridHit> = fts
+        .into_iter()
+        .enumerate()
+        .map(|(fi, h)| {
+            let mut s = 1.0 / (K + fi as f64 + 1.0);
+            if let Some(&vi) = vec_rank.get(h.full_name.as_str()) {
+                s += 1.0 / (K + vi as f64 + 1.0);
+            }
+            HybridHit {
+                full_name: h.full_name.clone(),
+                rrf: s,
+                hit: h,
+            }
+        })
+        .collect();
+    // vector-only repos FTS missed: still candidates, single-list score.
+    if !vec_hits.is_empty() {
+        let fts_names: std::collections::HashSet<&str> =
+            fused.iter().map(|h| h.full_name.as_str()).collect();
+        let extra = crate::store::repos_by_name(
+            db,
+            &vec_hits
+                .iter()
+                .enumerate()
+                .filter(|(_, (r, _))| !fts_names.contains(r.as_str()))
+                .map(|(vi, (r, _))| (r.clone(), 1.0 / (K + vi as f64 + 1.0)))
+                .collect::<Vec<_>>(),
+        )?;
+        fused.extend(extra);
+    }
+    fused.sort_by(|a, b| b.rrf.partial_cmp(&a.rrf).unwrap_or(std::cmp::Ordering::Equal));
+    fused.truncate(limit as usize);
+    Ok(fused)
+}
+
 /// Ranked search over FTS5 + filters. Offline. Jev-agnostic.
 pub fn search(
     db: &Connection,
@@ -18,7 +90,8 @@ pub fn search(
 
 /// Bounded agent object. Jev fields fill when curated, else null.
 pub fn context(db: &Connection, q: &str, limit: i64) -> Result<serde_json::Value> {
-    let hits = crate::store::search(db, q, None, None, false, limit)?;
+    let fused = hybrid(db, q, limit, false).unwrap_or_default();
+    let hits: Vec<Hit> = fused.iter().map(|h| h.hit.clone()).collect();
     let jev = crate::store::decisions_for(
         db,
         &hits.iter().map(|h| h.full_name.clone()).collect::<Vec<_>>(),
@@ -41,7 +114,8 @@ pub fn context(db: &Connection, q: &str, limit: i64) -> Result<serde_json::Value
                 "jev_score": jev.get(&h.full_name).and_then(|d| d.1),
                 "jev_confidence": jev.get(&h.full_name).and_then(|d| d.2),
                 "jev_tags": jev.get(&h.full_name).and_then(|d| d.0.clone()),
-                "why_matched": format!("FTS({q})"),
+                "why_matched": format!("hybrid-RRF({q})"),
+                "note": crate::notes::get(db, &h.full_name).ok().flatten().map(|(w, ts)| format!("[{ts}] {w}")),
                 "readme_excerpt": excerpt(h.description.as_deref()),
             })
         })

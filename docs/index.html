@@ -59,8 +59,10 @@ Keywords: github stars manager, mcp server rust, ai coding agent memory, claude 
     <table>
       <tr><th>Check</th><th>Result</th><th>Rerun</th></tr>
       <tr><td>Sync</td><td class="mono">1,244 repos, 8 archived</td><td class="mono">jst sync + jst status</td></tr>
-      <tr><td>Search latency</td><td class="mono">47-49ms on 1,244 rows</td><td class="mono">time jst search "rust" --limit 5</td></tr>
-      <tr><td>Tests</td><td class="mono">cargo test green, 5 tests</td><td class="mono">cargo test</td></tr>
+      <tr><td>Search latency</td><td class="mono">~20ms p50 on 1,244 rows</td><td class="mono">jst search "rust" --limit 5</td></tr>
+      <tr><td>Hybrid similar</td><td class="mono">~330ms p50 (BGE query-encode dominates)</td><td class="mono">jst similar "rust mcp"</td></tr>
+      <tr><td>Vectors</td><td class="mono">1,244/1,244 BGE-small-en-v1.5 384D</td><td class="mono">jst embed --limit 10</td></tr>
+      <tr><td>Tests</td><td class="mono">cargo test green, 8 tests</td><td class="mono">cargo test</td></tr>
       <tr><td>Curate ledger</td><td class="mono">rerun on done rows = 0 Jev calls</td><td class="mono">jst curate --limit 50 twice</td></tr>
       <tr><td>Jev confidence</td><td class="mono">0.72-0.79 with candidates, 0.37-0.46 without</td><td class="mono">see HANDOFF</td></tr>
     </table>
@@ -101,7 +103,9 @@ Keywords: github stars manager, mcp server rust, ai coding agent memory, claude 
       <div class="row"><code>jst status</code><span>Dead/alive/license rollup. Offline.</span></div>
       <div class="row"><code>jst curate</code><span>Jev Choice + Score batch, hash-cached. Optional, needs key.</span></div>
       <div class="row"><code>jst export</code><span><code>STARS.md</code> awesome-list, archived skipped. Offline.</span></div>
-      <div class="row"><code>jst mcp</code><span>stdio MCP server: search, context, status, sync, export.</span></div>
+      <div class="row"><code>jst similar &lt;q&gt;</code><span>Hybrid FTS + vector RRF. Offline after embed.</span></div>
+      <div class="row"><code>jst note &lt;repo&gt; [why]</code><span>Why you starred it. Surfaces in context.</span></div>
+      <div class="row"><code>jst mcp</code><span>stdio MCP server: search, similar, context, note, status, sync, export.</span></div>
     </div>
   </section>
 
@@ -121,7 +125,7 @@ excerpt:     The most RAM efficient harness</pre>
     "jev-stars": { "command": "jev-stars", "args": ["mcp"] }
   }
 }</pre>
-    <p>5 tools: <code>search, context, status, sync, export</code>. Start with <code>context</code>.</p>
+    <p>7 tools: <code>search, similar, context, note, status, sync, export</code>. Start with <code>context</code>.</p>
   </section>
 
   <section id="install" class="reveal">

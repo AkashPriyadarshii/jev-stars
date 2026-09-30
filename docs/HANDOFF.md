@@ -2,32 +2,27 @@
 
 ## Status
 
-MD skeleton complete. No code, no remote. Waiting on "go" for `gh repo create`.
+v0.1 shipped. v0.2 code complete, local only, nothing pushed. Waiting on "go" for release.
 
-## What shipped (docs only)
+## What shipped (v0.2, unreleased)
 
-1. `CLAUDE.md` + `AGENTS.md` (build, commands, search architecture).
-2. `README.md` (SEO block, Why, quickstart, MCP, limits, ecosystem, author).
-3. `docs/PRD.md` (v0.1 scope, non-goals, success criteria).
-4. `docs/ARCHITECTURE.md` (modules, ledger, data flow).
-5. `docs/DESIGN.md` (output shapes, truncation, dials).
-6. `STATE.md` + `CHANGELOG.md`.
+1. `similar` + `embed`: BGE-small-en-v1.5 384D, RRF k=20 fuse, hash384 fallback.
+2. `note`: one-table memory, CLI + MCP, surfaces in `context`.
+3. `context` hybrid. MCP 7 tools. 8 tests green, clippy clean.
+4. Docs: README, AGENTS, PRD, ARCHITECTURE, STATE, CHANGELOG, site all match v0.2.
 
-## Remaining for v0.1
+## Remaining for v0.2 release
 
-- `gh repo create jev-stars --public` + description/topics/homepage.
-- Chunk 1: `sync + store`. Check: row count == 1,244.
-- Chunk 2: `search + rank + context`. Check: <100ms.
-- Chunk 3: `curate` (optional, key-gated) + export. Check: rerun zero Jev calls; no-key run still gives full `context`.
-- Chunk 4: `mcp` stdio. Check: pi `context` returns rows.
+- Version bump + tag + push (needs "go").
+- `cargo publish` after tag.
+- Full `curate` remainder optional, `--limit` batches.
 
 ## Proven inputs
 
 - ziggygrep MDs: brevity pattern for CLAUDE/AGENTS/docs.
-- My-Starred-Repos: pipeline shape (fetch -> store -> build/export), 13-category taxonomy seed, `escapeHTML`-style output hygiene reminder.
-- sqlite-vec benchmark: FTS5-only correct for v0.1, hybrid in v0.2.
+- My-Starred-Repos: pipeline shape (fetch -> store -> build/export), 13-category taxonomy seed.
+- v0.2 research: exact scan beats sqlite-vec at 1,244 rows. BGE beats MiniLM on MTEB retrieval.
 
 ## Open questions
 
-- `gh api` subprocess vs direct HTTPS. Lean subprocess first.
-- Fixed tag taxonomy vs free tags. Lean fixed (13 categories) first.
+- ANN past 50k rows. int8 when DB size hurts. repo_events when notes prove short.

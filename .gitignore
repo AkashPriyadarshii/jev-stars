@@ -1,3 +1,6 @@
 /target/
 *.db
 STARS.md
+.fastembed_cache/
+.env
+*.log

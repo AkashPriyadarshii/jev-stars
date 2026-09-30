@@ -96,11 +96,10 @@ doskey jst=jev-stars $*
 ```
 
 ```console
-$ jst context "rust mcp" --limit 1
-repo:        1jehuang/jcode (20,200 stars, MIT)
-maintenance: active, pushed 2026-09-29
-why:         FTS(rust mcp)
-excerpt:     The most RAM efficient harness
+$ jst similar "video clip cutter" --limit 1
+zhouxiaoka/autoclip  0.0476
+$ jst note memvid/memvid "agentic long-term memory API, reference build"
+noted memvid/memvid
 ```
 
 ---
@@ -143,11 +142,14 @@ jev-stars context "rust mcp server" --json
 |-------|--------|
 | `sync` | Pull stars via `gh api`, upsert SQLite (net) |
 | `search <q>` | FTS + `--lang`/`--topic`/`--alive`, ranked table (offline) |
-| `context <q>` | Bounded agent JSON: health + Jev + evidence (offline after curate) |
+| `similar <q>` | Hybrid FTS + vector RRF (`--hash` for zero-download fallback) |
+| `embed` | Build BGE-small-en-v1.5 index, batched + resumable (net once for model) |
+| `context <q>` | Bounded agent JSON: health + Jev + note + evidence (offline) |
+| `note <repo> [why]` | Save or read why you starred it. `--list` dumps all |
 | `status` | Dead/alive/license rollup (offline) |
 | `curate` | Jev Choice + Score batch, cache-first (net, optional) |
 | `export` | `STARS.md` grouped by tags (offline) |
-| `mcp` | stdio MCP server: `search, context, status, sync, export` |
+| `mcp` | stdio MCP server: `search, similar, context, note, status, sync, export` |
 
 Global: `--json`, `--limit N` (default 10, max 50). Exit codes: 0 ok, 1 no match, 2 error.
 
@@ -163,7 +165,7 @@ Global: `--json`, `--limit N` (default 10, max 50). Exit codes: 0 ok, 1 no match
 }
 ```
 
-5 tools: `search, context, status, sync, export`. Start with `context`.
+7 tools: `search, similar, context, note, status, sync, export`. Start with `context`.
 
 ---
 
@@ -174,8 +176,11 @@ Every number below is measured on this machine (i3-1115G4, 8GB, Windows 11), nev
 | Check | Result | Rerun |
 |---|---|---|
 | Sync | 1,244 repos, 8 archived | `jst sync` + `jst status` |
-| Search latency | 47-49ms on 1,244 rows | `time jst search "rust" --limit 5` |
-| Test suite | `cargo test` green, 5 tests (store 1, scoring 1, query 2, export 1) | per-file `cargo test` |
+| Search latency | ~16-20ms p50 on 1,244 rows | `jst search "rust" --limit 5` |
+| Hybrid `similar` | ~330ms p50 (BGE query-encode dominates, scan is microseconds) | `jst similar "rust mcp"` |
+| Hybrid `context` | ~345ms p50 | `jst context "rust mcp"` |
+| Vectors | 1,244/1,244 BGE-small-en-v1.5 384D, DB 4.03MB total | `jst embed --limit 10` |
+| Test suite | `cargo test` green, 8 tests | per-file `cargo test` |
 | Clippy | `cargo clippy --all-targets --locked -- -D warnings` clean | same |
 | Curate ledger | rerun on done rows = zero Jev calls | `jst curate --limit 50` twice |
 | Jev confidence | 0.72-0.79 with candidates in state, 0.37-0.46 without | see HANDOFF |
@@ -196,7 +201,9 @@ src/
   store.rs    - schema, FTS5, ledger CRUD
   scoring.rs  - deterministic health (no LLM)
   curate.rs   - Jev batch, hash-gated
-  query.rs    - FTS + rank + context pack
+  query.rs    - FTS + vector RRF fuse + context pack
+  vector.rs   - BGE-small-en-v1.5 embed, hash384 fallback, exact-scan KNN
+  notes.rs    - why-you-starred-it, one table
   export.rs   - STARS.md writer
   mcp.rs      - hand-rolled stdio server (no rmcp dep, same fns as CLI)
 ```
@@ -216,9 +223,10 @@ Tests live beside the code they cover. Non-trivial logic ships with one runnable
 
 ## Limits and non-goals
 
-- No vectors in v0.1. FTS5 + Jev tags cover 1-2k rows. sqlite-vec lands in v0.2 when FTS measurably falls short.
+- No ANN index. 1,244 x 384 exact scan runs in microseconds; sqlite-vec adds risk for zero gain at this size. Revisit past 50k rows.
+- No quantized vectors. int8 saves ~1.4MB and risks quality. Revisit when DB size hurts.
 - No TUI, no dashboard, no release tracker, no browser ext. My-Starred-Repos already serves humans.
-- No regex search. Literal + FTS only in v0.1.
+- No regex search. Literal + FTS + vectors only.
 - Not a GitHub client. No star/unstar. Read-only memory over your stars.
 
 ---

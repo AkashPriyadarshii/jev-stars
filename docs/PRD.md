@@ -30,9 +30,19 @@ the truth. Jev adds judgment once, cached by content hash.
 - `mcp`: stdio server, 5 tools (`search, context, status, sync, export`).
 - `cargo test` green. `cargo clippy -D warnings` clean.
 
-## Non-goals (v0.1)
+## v0.2 scope (shipped, unreleased)
 
-- Vectors, sqlite-vec, LanceDB. v0.2 when FTS falls short.
+- `similar`: FTS top-50 + BGE-small-en-v1.5 top-50 fused by RRF k=20. Exact scan, no sqlite-vec.
+- `embed`: batched + resumable index build. Model downloads once, then offline.
+- `note`: one-table memory `(repo, why, ts)`. Surfaces in `context` + MCP.
+- `context` now runs hybrid retrieval and carries `note` per result.
+- MCP grows to 7 tools: `search, similar, context, note, status, sync, export`.
+
+## Non-goals (v0.2)
+
+- ANN index (sqlite-vec, HNSW). Exact scan wins at 1,244 rows. Revisit past 50k.
+- Quantized vectors. int8 saves ~1.4MB, quality unproven. Revisit when size hurts.
+- repo_events table. `notes` + `pushed_at` cover temporal queries until proven short.
 - TUI, dashboard, web UI. My-Starred-Repos covers humans.
 - Release tracking, notifications, browser ext.
 - star/unstar mutation. Read-only memory.
@@ -40,14 +50,14 @@ the truth. Jev adds judgment once, cached by content hash.
 
 ## Roadmap
 
-- v0.1 ships the six commands + MCP. Tag it, lock CLI shape.
-- v0.2 retrieval: sqlite-vec hybrid (FTS5 + vectors + RRF), `similar` tool.
-- v0.3 memory: notes (`why I starred this`), temporal queries ("starred 6mo ago, still alive?").
+- v0.1 shipped the six commands + MCP. Tag it, lock CLI shape.
+- v0.2 ships hybrid + notes (this doc). Unreleased, local only.
+- v0.3 memory: temporal queries ("starred 6mo ago, still alive?") on notes + pushed_at.
 - v1.0 stable: frozen CLI + MCP contract, release matrix, man page.
 
 ## Success criteria
 
 - Correct: sync count == GitHub starred count (1,244 on 2026-09-29).
-- Fast: `search` p50 <100ms on 8GB i3. Rerun `curate` = 0 Jev calls.
-- Small: one binary, SQLite file ~6MB, no daemon.
+- Fast: `search` p50 ~20ms, `similar` p50 ~330ms, `context` p50 ~345ms (measured 2026-09-30).
+- Small: one binary, SQLite file 4.03MB, no daemon.
 - Agent check: pi `context "rust mcp"` returns alive-first ranked rows with evidence, with and without Jev rows present.

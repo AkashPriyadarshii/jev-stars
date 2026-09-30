@@ -2,6 +2,16 @@
 
 All notable changes. Keep a Changelog format: Added, Changed, Fixed per release.
 
+## [Unreleased] - v0.2 (local only, not pushed)
+
+- Added `similar`: hybrid FTS top-50 + BGE-small-en-v1.5 top-50 fused by RRF k=20.
+- Added `embed`: batched + resumable BGE index build. hash384 `--hash` fallback needs zero download.
+- Added `note`: one-table memory `(repo, why, ts)`. `context` + MCP surface it.
+- Changed `context` to hybrid retrieval with `hybrid-RRF` why_matched.
+- Changed MCP to 7 tools: `search, similar, context, note, status, sync, export`.
+- Measured: search p50 ~20ms, similar p50 ~330ms, context p50 ~345ms. DB 4.03MB.
+- Skipped: ANN index, int8 quant, repo_events table.
+
 ## [0.1.0] - 2026-09-29
 
 - `sync`: 1,244 stars via `gh api` into SQLite + FTS5 (porter).

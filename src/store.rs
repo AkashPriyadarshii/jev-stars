@@ -41,12 +41,14 @@ pub fn open(path: &str) -> Result<Connection> {
         CREATE VIRTUAL TABLE IF NOT EXISTS repos_fts USING fts5(
             full_name UNINDEXED, description, language, topics, tokenize='porter'
         );
+        CREATE TABLE IF NOT EXISTS embeddings(repo TEXT PRIMARY KEY, model TEXT, dim INTEGER, vec BLOB);
         CREATE TABLE IF NOT EXISTS decisions(
             repo TEXT, content_hash TEXT, schema_v INTEGER, model TEXT,
             choice TEXT, score REAL, confidence REAL, tags TEXT, evidence TEXT, ts TEXT,
             PRIMARY KEY(repo, content_hash, schema_v, model)
         );
-        CREATE INDEX IF NOT EXISTS idx_decisions_repo ON decisions(repo);",
+        CREATE INDEX IF NOT EXISTS idx_decisions_repo ON decisions(repo);
+        CREATE TABLE IF NOT EXISTS embeddings(repo TEXT PRIMARY KEY, model TEXT, dim INTEGER, vec BLOB);",
     )?;
     Ok(db)
 }
@@ -88,7 +90,7 @@ pub fn upsert(db: &Connection, repos: &[Repo]) -> Result<usize> {
 }
 
 /// Search hit: stored fields only, no Jev join yet (chunk 3).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Hit {
     pub full_name: String,
     pub description: Option<String>,
@@ -177,6 +179,41 @@ pub fn decisions_for(
         map.insert(repo, (choice, score, conf));
     }
     Ok(map)
+}
+
+/// Hydrate HybridHits for vector-only repos FTS missed.
+pub fn repos_by_name(db: &Connection, ranked: &[(String, f64)]) -> Result<Vec<crate::query::HybridHit>> {
+    use crate::query::HybridHit;
+    let mut out = Vec::with_capacity(ranked.len());
+    let mut stmt = db.prepare(
+        "SELECT full_name,description,language,stars,url,topics,license,archived,pushed_at
+         FROM repos WHERE full_name = ?1",
+    )?;
+    for (name, rrf) in ranked {
+        let hit: Option<Hit> = stmt
+            .query_row([name], |r| {
+                Ok(Hit {
+                    full_name: r.get(0)?,
+                    description: r.get(1)?,
+                    language: r.get(2)?,
+                    stars: r.get(3)?,
+                    url: r.get(4)?,
+                    topics: r.get::<_, Option<String>>(5)?.unwrap_or_default(),
+                    license: r.get(6)?,
+                    archived: r.get::<_, i64>(7)? == 1,
+                    pushed_at: r.get(8)?,
+                })
+            })
+            .ok();
+        if let Some(h) = hit {
+            out.push(HybridHit {
+                full_name: name.clone(),
+                rrf: *rrf,
+                hit: h,
+            });
+        }
+    }
+    Ok(out)
 }
 
 pub fn counts(db: &Connection) -> Result<(i64, i64, i64)> {

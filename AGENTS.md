@@ -39,6 +39,9 @@ with one runnable check.
 | `status` | Dead/alive/license rollup, fully offline |
 | `curate` | Jev Choice + Score batch, cache-first, needs net, optional (skipped without key) |
 | `export` | `STARS.md` awesome-list grouped by Jev tags, offline |
+| `similar <q>` | Hybrid FTS top-50 + vector top-50, RRF k=20. `--hash` skips model download |
+| `embed` | BGE-small-en-v1.5 index build, batched + resumable, net once for model |
+| `note <repo> [why]` | One-table memory: why you starred it. `--list` dumps all |
 | `mcp` | stdio MCP server for pi, same fns as CLI |
 
 Global flags: `--json`, `--limit N` (default 10, max 50).
@@ -55,9 +58,11 @@ alias; binary stays `jev-stars`. No code change: clap is argv[0]-agnostic.
 - `context` merges FTS rank + health + cached Jev into one bounded
   object with `why_matched` + README excerpt. Token-capped by construction.
   Jev fields are null when never curated; the object still answers.
-- Net only in `sync` (GitHub) and `curate` (Jev). Query paths never touch net.
-- MCP layer sells `context`, not `search`. 5 tools max:
-  `search, context, status, sync, export`. `similar`/vectors wait for v0.2.
+- Net only in `sync` (GitHub), `curate` (Jev), first `embed` (model download). Query paths never touch net.
+- MCP layer sells `context`, not `search`. 7 tools:
+  `search, similar, context, note, status, sync, export`.
+- Retrieval: FTS top-50 + vector top-50 fused by RRF k=20. No score calibration, no learned weights until labeled queries exist.
+- Model cache lives outside the SQLite file. One-file means corpus + state only.
 
 ## Exit codes and errors
 
@@ -73,9 +78,11 @@ src/
   store.rs    - schema, FTS5, ledger CRUD
   scoring.rs  - deterministic health (no LLM)
   curate.rs   - Jev batch, hash-gated
-  query.rs    - FTS + rank + context pack
+  query.rs    - FTS + vector RRF fuse + context pack
+  vector.rs   - BGE embed, hash384 fallback, exact-scan KNN
+  notes.rs    - one-table memory
   export.rs   - STARS.md writer
-  mcp.rs      - rmcp stdio server
+  mcp.rs      - hand-rolled stdio server (no rmcp dep)
 build         - cargo, no build script in v0.1
 docs/         - PRD, ARCHITECTURE, DESIGN, HANDOFF
 memory/       - session notes
