@@ -4,3 +4,8 @@
 *.js -text diff=js
 *.png binary
 *.svg text eol=lf
+
+# Site/docs are vendored static assets: hide from language bar.
+docs/* linguist-vendored
+site/* linguist-vendored
+assets/* linguist-vendored
