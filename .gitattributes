@@ -1,0 +1,6 @@
+# Generated/static web assets: no line-ending churn, no diff noise.
+*.html -text diff=html
+*.css -text diff=css
+*.js -text diff=js
+*.png binary
+*.svg text eol=lf
