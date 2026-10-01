@@ -14,6 +14,7 @@ Keywords: github stars manager, mcp server rust, ai coding agent memory, claude 
   <meta name="author" content="Akash Priyadarshi">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="canonical" href="https://github.com/AkashPriyadarshii/jev-stars">
+  <link rel="preload" href="fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin>
   <meta property="og:type" content="website">
   <meta property="og:title" content="jev-stars - GitHub Stars Memory for AI Coding Agents">
   <meta property="og:description" content="One Rust binary. Your 1244 stars become agent-ready memory: health + Jev judgment + evidence in one bounded object.">
@@ -32,90 +33,92 @@ Keywords: github stars manager, mcp server rust, ai coding agent memory, claude 
 <body>
 <div class="wrap">
   <header>
-    <img src="favicon.svg" alt="jev-stars logo">
+    <img src="favicon.svg" alt="jev-stars logo" width="32" height="32">
     <strong>jev-stars</strong>
-    <nav><a href="#trust">Trust</a><a href="#commands">Commands</a><a href="#mcp">MCP</a><a href="https://github.com/AkashPriyadarshii/jev-stars">GitHub</a></nav>
+    <nav><a href="#proof">Proof</a><a href="#data">Stars</a><a href="#commands">Commands</a><a href="#mcp">MCP</a><a href="https://github.com/AkashPriyadarshii/jev-stars">GitHub</a></nav>
   </header>
 
   <div class="hero">
-    <h1>Your stars, <span>remembered.</span></h1>
-    <p class="lede">1,244 GitHub stars turned into agent-ready memory. One Rust binary. Offline-first. Your coding agent gets facts plus judgment in one bounded object.</p>
-    <div class="stats">
-      <div><strong>1,244</strong><span>stars tracked</span></div>
-      <div><strong>47ms</strong><span>search, local</span></div>
-      <div><strong>579</strong><span>MIT licensed</span></div>
-      <div><strong>0</strong><span>daemons</span></div>
+    <div class="hero-copy">
+      <p class="kicker">Rust CLI plus MCP server</p>
+      <h1>Your stars, <span>remembered.</span></h1>
+      <p class="lede">1,244 GitHub stars turned into agent-ready memory. One binary. Offline first.</p>
+      <div class="cmd"><code id="install">cargo install jev-stars</code><button data-copy="install" type="button">copy</button></div>
+      <div class="badges">
+        <img src="https://img.shields.io/badge/license-MIT-0055ff.svg?style=flat-square" alt="MIT License" width="68" height="20">
+        <img src="https://img.shields.io/badge/rust-1.70+-ce422b.svg?style=flat-square&amp;logo=rust" alt="Rust 1.70 or newer" width="92" height="20">
+        <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-2a3138.svg?style=flat-square" alt="Platforms" width="190" height="20">
+      </div>
     </div>
-    <div class="cmd"><code id="install">cargo install jev-stars</code><button data-copy="install">copy</button></div>
-    <div class="badges">
-      <img src="https://img.shields.io/badge/license-MIT-0055ff.svg?style=flat-square" alt="MIT License">
-      <img src="https://img.shields.io/badge/rust-1.70+-ce422b.svg?style=flat-square&logo=rust" alt="Rust 1.70+">
-      <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-2a3138.svg?style=flat-square" alt="Platforms">
+    <div class="term" role="img" aria-label="Terminal showing real jst context output for rust mcp">
+      <div class="term-bar"><i></i><i></i><i></i><span>jst</span></div>
+      <div class="term-body" id="termBody" aria-hidden="true"><span id="termText"></span><span class="caret"></span></div>
+      <noscript><pre>$ jst context "rust mcp" --limit 1
+repo:        1jehuang/jcode (20,200 stars, MIT)
+maintenance: active, pushed 2026-09-29
+why:         FTS(rust mcp)
+excerpt:     The most RAM efficient harness</pre></noscript>
     </div>
   </div>
 
-  <section id="trust" class="reveal">
-    <h2>How far to trust it</h2>
-    <table>
-      <tr><th>Check</th><th>Result</th><th>Rerun</th></tr>
-      <tr><td>Sync</td><td class="mono">1,244 repos, 8 archived</td><td class="mono">jst sync + jst status</td></tr>
-      <tr><td>Search latency</td><td class="mono">~20ms p50 on 1,244 rows</td><td class="mono">jst search "rust" --limit 5</td></tr>
-      <tr><td>Hybrid similar</td><td class="mono">~330ms p50 (BGE query-encode dominates)</td><td class="mono">jst similar "rust mcp"</td></tr>
-      <tr><td>Vectors</td><td class="mono">1,244/1,244 BGE-small-en-v1.5 384D</td><td class="mono">jst embed --limit 10</td></tr>
-      <tr><td>Tests</td><td class="mono">cargo test green, 8 tests</td><td class="mono">cargo test</td></tr>
-      <tr><td>Curate ledger</td><td class="mono">rerun on done rows = 0 Jev calls</td><td class="mono">jst curate --limit 50 twice</td></tr>
-      <tr><td>Jev confidence</td><td class="mono">0.72-0.79 with candidates, 0.37-0.46 without</td><td class="mono">see HANDOFF</td></tr>
-    </table>
+  <section id="proof" class="reveal">
+    <h2>Proof, not promises</h2>
+    <div class="proof-grid">
+      <div class="proof"><strong>1,244</strong><span>repos synced, 8 archived</span><code>jst sync plus jst status</code></div>
+      <div class="proof"><strong>20ms</strong><span>search p50 on 1,244 rows</span><code>jst search "rust" --limit 5</code></div>
+      <div class="proof"><strong>330ms</strong><span>hybrid similar p50, BGE encode dominates</span><code>jst similar "rust mcp"</code></div>
+    </div>
+    <div class="ledger"><span>Rerun on done rows costs zero Jev calls. Confidence 0.72 to 0.79 with candidates, 0.37 to 0.46 without.</span><code>jst curate --limit 50 twice</code></div>
   </section>
 
-  <section id="langs" class="reveal">
+  <section id="data" class="reveal">
+    <canvas id="stars" aria-hidden="true"></canvas>
     <h2>What you actually starred</h2>
-    <div class="bars">
-      <div class="bar"><span>Python 353</span><i style="width:100%"></i></div>
-      <div class="bar"><span>TypeScript 324</span><i style="width:92%"></i></div>
-      <div class="bar"><span>Rust 120</span><i style="width:34%"></i></div>
-      <div class="bar"><span>JavaScript 77</span><i style="width:22%"></i></div>
-      <div class="bar"><span>Go 62</span><i style="width:18%"></i></div>
-      <div class="bar"><span>Swift 44</span><i style="width:12%"></i></div>
-      <div class="bar"><span>Kotlin 29</span><i style="width:8%"></i></div>
+    <div class="bento">
+      <div class="cell big"><strong>353</strong><span>Python</span><em>28 percent of stars</em></div>
+      <div class="cell big"><strong>324</strong><span>TypeScript</span><em>26 percent of stars</em></div>
+      <div class="cell"><strong>120</strong><span>Rust</span></div>
+      <div class="cell"><strong>77</strong><span>JavaScript</span></div>
+      <div class="cell"><strong>62</strong><span>Go</span></div>
+      <div class="cell"><strong>44</strong><span>Swift</span></div>
+      <div class="cell"><strong>29</strong><span>Kotlin</span></div>
     </div>
   </section>
 
   <section id="top" class="reveal">
     <h2>Heaviest stars</h2>
-    <table>
-      <tr><th>Repo</th><th>Stars</th></tr>
-      <tr><td class="mono">sindresorhus/awesome</td><td class="mono">512,141</td></tr>
-      <tr><td class="mono">public-apis/public-apis</td><td class="mono">484,174</td></tr>
-      <tr><td class="mono">donnemartin/system-design-primer</td><td class="mono">372,425</td></tr>
-      <tr><td class="mono">vinta/awesome-python</td><td class="mono">323,926</td></tr>
-      <tr><td class="mono">obra/superpowers</td><td class="mono">292,613</td></tr>
-      <tr><td class="mono">practical-tutorials/project-based-learning</td><td class="mono">285,170</td></tr>
-    </table>
+    <ol class="tops">
+      <li><span>sindresorhus/awesome</span><b>512,141</b></li>
+      <li><span>public-apis/public-apis</span><b>484,174</b></li>
+      <li><span>donnemartin/system-design-primer</span><b>372,425</b></li>
+      <li><span>vinta/awesome-python</span><b>323,926</b></li>
+      <li><span>obra/superpowers</span><b>292,613</b></li>
+      <li><span>practical-tutorials/project-based-learning</span><b>285,170</b></li>
+    </ol>
   </section>
 
   <section id="commands" class="reveal">
     <h2>Commands</h2>
-    <div class="cmds">
-      <div class="row"><code>jst sync</code><span>Pull stars via <code>gh api</code>, upsert SQLite. Needs net.</span></div>
-      <div class="row"><code>jst search &lt;q&gt;</code><span>FTS + <code>--lang</code> / <code>--topic</code> / <code>--alive</code>. Offline, ~47ms.</span></div>
-      <div class="row"><code>jst context &lt;q&gt;</code><span>Bounded agent JSON: health + Jev + evidence. Start here.</span></div>
-      <div class="row"><code>jst status</code><span>Dead/alive/license rollup. Offline.</span></div>
-      <div class="row"><code>jst curate</code><span>Jev Choice + Score batch, hash-cached. Optional, needs key.</span></div>
-      <div class="row"><code>jst export</code><span><code>STARS.md</code> awesome-list, archived skipped. Offline.</span></div>
-      <div class="row"><code>jst similar &lt;q&gt;</code><span>Hybrid FTS + vector RRF. Offline after embed.</span></div>
-      <div class="row"><code>jst note &lt;repo&gt; [why]</code><span>Why you starred it. Surfaces in context.</span></div>
-      <div class="row"><code>jst mcp</code><span>stdio MCP server: search, similar, context, note, status, sync, export.</span></div>
+    <div class="clusters">
+      <details open>
+        <summary>Find</summary>
+        <div class="row"><code>jst search &lt;q&gt;</code><span>FTS plus lang, topic, alive flags. Offline, 47ms.</span></div>
+        <div class="row"><code>jst similar &lt;q&gt;</code><span>Hybrid FTS plus vector RRF. Offline after embed.</span></div>
+        <div class="row"><code>jst status</code><span>Dead, alive, and license rollup. Offline.</span></div>
+      </details>
+      <details>
+        <summary>Remember</summary>
+        <div class="row"><code>jst context &lt;q&gt;</code><span>Bounded agent JSON: health plus Jev plus evidence. Start here.</span></div>
+        <div class="row"><code>jst note &lt;repo&gt; [why]</code><span>Why you starred it. Surfaces in context.</span></div>
+        <div class="row"><code>jst curate</code><span>Jev batch, hash cached. Optional, needs key.</span></div>
+      </details>
+      <details>
+        <summary>Serve</summary>
+        <div class="row"><code>jst sync</code><span>Pull stars via gh api, upsert SQLite. Needs net.</span></div>
+        <div class="row"><code>jst export</code><span>STARS.md awesome list, archived skipped. Offline.</span></div>
+        <div class="row"><code>jst mcp</code><span>stdio server: search, similar, context, note, status, sync, export.</span></div>
+      </details>
     </div>
-  </section>
-
-  <section id="example" class="reveal">
-    <h2>Real output</h2>
-<pre>$ jst context "rust mcp" --limit 1
-repo:        1jehuang/jcode (20,200 stars, MIT)
-maintenance: active, pushed 2026-09-29
-why:         FTS(rust mcp)
-excerpt:     The most RAM efficient harness</pre>
   </section>
 
   <section id="mcp" class="reveal">
@@ -130,10 +133,10 @@ excerpt:     The most RAM efficient harness</pre>
 
   <section id="install" class="reveal">
     <h2>Install</h2>
-    <div class="tabs">
-      <button class="tab on" data-tab="t-cargo">cargo</button>
-      <button class="tab" data-tab="t-bin">binary</button>
-      <button class="tab" data-tab="t-src">source</button>
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-tab="t-cargo" role="tab" type="button">cargo</button>
+      <button class="tab" data-tab="t-bin" role="tab" type="button">binary</button>
+      <button class="tab" data-tab="t-src" role="tab" type="button">source</button>
     </div>
 <pre id="t-cargo">cargo install jev-stars
 jst sync
@@ -149,13 +152,9 @@ cargo build --release
   <section id="faq" class="reveal">
     <h2>FAQ</h2>
     <p><strong>Does jev-stars need an API key?</strong> No. Search, rank, context, status, and export work offline with zero keys. Only <code>curate</code> needs <code>TYPESAFE_API_KEY</code>, once, and results cache by content hash.</p>
-    <p><strong>How is this different from GitHub's stars page?</strong> GitHub gives you a paginated list. jev-stars gives your agent a bounded <code>context</code> object: health, license, Jev score, and evidence excerpt in ~2k tokens.</p>
-    <p><strong>Why not vectors in v0.1?</strong> FTS5 answers 1,244 rows in 47ms. sqlite-vec lands in v0.2 only when FTS measurably falls short.</p>
-  </section>
-
-  <section id="limits" class="reveal">
-    <h2>Limits</h2>
-    <p>No vectors in v0.1 (sqlite-vec lands in v0.2). No TUI, no dashboard, no release tracker. No star/unstar. Read-only memory over your stars.</p>
+    <p><strong>How is this different from the GitHub stars page?</strong> GitHub gives a paginated list. jev-stars gives your agent a bounded <code>context</code> object: health, license, Jev score, and evidence excerpt in about 2k tokens.</p>
+    <p><strong>No vectors in v0.1?</strong> FTS5 answers 1,244 rows in 47ms. BGE vectors landed in v0.2 with RRF hybrid, 330ms p50.</p>
+    <p><strong>Limits?</strong> No TUI, no dashboard, no release tracker. No star or unstar. Read only memory over your stars.</p>
   </section>
 
   <footer>
@@ -169,19 +168,49 @@ cargo build --release
   </footer>
 </div>
 <script>
-document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
-  const t = document.getElementById(b.dataset.copy).textContent;
-  if (navigator.clipboard) navigator.clipboard.writeText(t);
-  b.textContent = "copied";
-  setTimeout(() => b.textContent = "copy", 1200);
-}));
-document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
-  document.querySelectorAll(".tab").forEach(x => x.classList.remove("on"));
+document.querySelectorAll("[data-copy]").forEach(function(b){b.addEventListener("click",function(){
+  var t=document.getElementById(b.dataset.copy).textContent;
+  if(navigator.clipboard)navigator.clipboard.writeText(t);
+  b.textContent="copied";setTimeout(function(){b.textContent="copy"},1200);
+})});
+document.querySelectorAll(".tab").forEach(function(t){t.addEventListener("click",function(){
+  document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});
   t.classList.add("on");
-  ["t-cargo", "t-bin", "t-src"].forEach(id => document.getElementById(id).hidden = id !== t.dataset.tab);
-}));
-const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.1 });
-document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  ["t-cargo","t-bin","t-src"].forEach(function(id){document.getElementById(id).hidden=id!==t.dataset.tab});
+})});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:0.1});
+document.querySelectorAll(".reveal").forEach(function(el){io.observe(el)});
+(function(){
+  var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var lines=['$ jst context "rust mcp" --limit 1','repo:  1jehuang/jcode (20,200 stars, MIT)','kept:  active, pushed 2026-09-29','why:   FTS(rust mcp)','show:  The most RAM efficient harness'];
+  var el=document.getElementById("termText");
+  if(!el)return;
+  if(reduce){el.textContent=lines.join("\n");return}
+  var li=0,ci=0,out="";
+  function tick(){
+    if(li>=lines.length)return;
+    if(ci<=lines[li].length){out=lines.slice(0,li).join("\n")+(li?"\n":"")+lines[li].slice(0,ci);el.textContent=out;ci++;setTimeout(tick,18)}
+    else{li++;ci=0;setTimeout(tick,350)}
+  }
+  var tio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){tick();tio.disconnect()}})},{threshold:0.3});
+  tio.observe(el);
+})();
+(function(){
+  var cv=document.getElementById("stars");
+  if(!cv||!cv.getContext)return;
+  var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce)return;
+  var ctx=cv.getContext("2d"),pts=[],run=true;
+  function size(){var r=cv.parentElement.getBoundingClientRect();cv.width=r.width;cv.height=220;
+    pts=[];for(var i=0;i<70;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.4+0.3,s:Math.random()*0.25+0.05});
+  }
+  size();window.addEventListener("resize",size);
+  function frame(){if(!run)return;ctx.clearRect(0,0,cv.width,cv.height);ctx.fillStyle="#f5b301";
+    for(var i=0;i<pts.length;i++){var p=pts[i];p.y-=p.s;if(p.y<0)p.y=cv.height;ctx.globalAlpha=0.25+0.5*Math.abs(Math.sin(p.y*0.05));ctx.fillRect(p.x,p.y,p.r,p.r)}
+    ctx.globalAlpha=1;requestAnimationFrame(frame)}
+  var sio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){if(!run){run=true;requestAnimationFrame(frame)}}else{run=false}})},{threshold:0});
+  sio.observe(cv);requestAnimationFrame(frame);
+})();
 </script>
 </body>
 </html>
