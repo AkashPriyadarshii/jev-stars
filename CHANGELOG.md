@@ -2,6 +2,10 @@
 
 All notable changes. Keep a Changelog format: Added, Changed, Fixed per release.
 
+## [Unreleased]
+
+- Site v2: asymmetric split hero with live terminal, proof cards + ledger strip, 7-cell bento + starfield, Find/Remember/Serve accordion. `site/` is source, `docs/` is the Pages deploy root.
+
 ## [0.2.0] - 2026-09-30
 
 - Added `similar`: hybrid FTS top-50 + BGE-small-en-v1.5 top-50 fused by RRF k=20.

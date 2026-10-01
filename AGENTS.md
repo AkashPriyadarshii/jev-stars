@@ -1,5 +1,7 @@
 # jev-stars
 
+> Public FOSS repo. Their conventions win here: minimal diffs, repo linters/tests, no new deps without justification, no history rewrites, no metadata/version edits outside the release flow below. Keep personal machine paths, keys, and local config out of tracked files.
+
 ## What is this?
 
 Local-first Rust CLI turning 1,244 GitHub stars into agent-ready memory.

@@ -21,3 +21,5 @@ cargo test
 cargo clippy --all-targets --locked -- -D warnings
 cargo fmt --check
 ```
+
+No push without explicit "go". PR authors skip the changelog; the maintainer adds the entry and thanks you at land.

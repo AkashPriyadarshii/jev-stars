@@ -42,7 +42,7 @@ repo context over HTTP-free stdio.
 - `mcp`: stdio server, 5 tools (`search, context, status, sync, export`).
 - `cargo test` green. `cargo clippy -D warnings` clean.
 
-## v0.2 scope (shipped, unreleased)
+## v0.2 scope (shipped 2026-09-30)
 
 - `similar`: FTS top-50 + BGE-small-en-v1.5 top-50 fused by RRF k=20. Exact scan, no sqlite-vec.
 - `embed`: batched + resumable index build. Model downloads once, then offline.
@@ -63,7 +63,7 @@ repo context over HTTP-free stdio.
 ## Roadmap
 
 - v0.1 shipped the six commands + MCP. Tag it, lock CLI shape.
-- v0.2 ships hybrid + notes (this doc). Unreleased, local only.
+- v0.2.0 shipped hybrid + notes + 7-tool MCP.
 - v0.3 mining: temporal queries on notes + pushed_at ("starred 6mo ago,
 still alive?"). `context --mine` dumps top-3 READMEs side-by-side for
 agent arch diff.

@@ -2,6 +2,8 @@
 
 CLI tool. No web UI. This file records interface decisions so output stays stable.
 
+> Site source lives in `site/`, Pages serves a mirror in `docs/`. Edit `site/`, then mirror into `docs/` before push.
+
 ## Output shape
 
 Default `search`: human table, one repo per line.
